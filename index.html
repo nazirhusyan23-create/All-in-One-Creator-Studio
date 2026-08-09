@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All-in-One Creator Studio — Free Browser-Based Photo, Video &amp; PDF Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          sans: ['"Inter"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        },
+        colors: {
+          base: '#0B0D12',
+          elev: '#12151C',
+          elev2: '#171B24',
+          elev3: '#1D222D',
+          brd: '#232833',
+          ink: '#E8EAF0',
+          dim: '#8B92A5',
+          faint: '#565D6D',
+          violet: { DEFAULT: '#8B7CF6', soft: '#8B7CF61F' },
+          amber: { DEFAULT: '#F5A524', soft: '#F5A5241F' },
+          teal: { DEFAULT: '#2DD4BF', soft: '#2DD4BF1F' },
+          danger: '#FB7185',
+        },
+      },
+    },
+  }
+</script>
+<style>
+  * { scrollbar-width: thin; scrollbar-color: #2b3140 transparent; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: #2b3140; border-radius: 8px; }
+  html { scroll-behavior: smooth; }
+  body { background-color: #0B0D12; }
+
+  .bg-noise {
+    background-image: radial-gradient(circle at 15% 10%, rgba(139,124,246,0.09), transparent 40%),
+                       radial-gradient(circle at 85% 0%, rgba(245,165,36,0.07), transparent 35%),
+                       radial-gradient(circle at 50% 100%, rgba(45,212,191,0.06), transparent 40%);
+  }
+
+  .checker {
+    background-image: linear-gradient(45deg, #23293399 25%, transparent 25%),
+      linear-gradient(-45deg, #23293399 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #23293399 75%),
+      linear-gradient(-45deg, transparent 75%, #23293399 75%);
+    background-size: 16px 16px;
+    background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+    background-color: #0f1319;
+  }
+
+  .rail-dot { box-shadow: 0 0 0 3px rgba(0,0,0,0); transition: box-shadow .2s ease; }
+  .nav-item.active .rail-dot { box-shadow: 0 0 0 3px currentColor inset; }
+
+  @keyframes scan {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(400%); }
+  }
+  .scan-bar::after {
+    content: '';
+    position: absolute; inset: 0;
+    width: 30%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
+    animation: scan 1.1s linear infinite;
+  }
+
+  @keyframes fadein { from { opacity: 0; transform: translateY(6px);} to { opacity: 1; transform: translateY(0);} }
+  .fade-in { animation: fadein .35s ease both; }
+
+  input[type="range"] {
+    -webkit-appearance: none; appearance: none;
+    height: 4px; border-radius: 999px; background: #232833; outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: #E8EAF0; border: 3px solid #12151C;
+    cursor: pointer; margin-top: -6px;
+    box-shadow: 0 0 0 1px #2b3140;
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 16px; height: 16px; border-radius: 50%;
+    background: #E8EAF0; border: 3px solid #12151C; cursor: pointer;
+  }
+  input[type="range"].accent-violet::-webkit-slider-thumb { background:#8B7CF6; }
+  input[type="range"].accent-amber::-webkit-slider-thumb { background:#F5A524; }
+  input[type="range"].accent-teal::-webkit-slider-thumb { background:#2DD4BF; }
+
+  .toast { transition: all .35s cubic-bezier(.2,.9,.3,1.2); }
+
+  .crop-handle { touch-action: none; }
+  .dropzone.dragover { border-color: currentColor; background: rgba(255,255,255,0.03); }
+
+  .tab-underline { position: relative; }
+  .tab-underline::after {
+    content:''; position:absolute; left:0; right:0; bottom:-1px; height:2px;
+    background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .25s ease;
+  }
+  .tab-underline.active::after { transform: scaleX(1); }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  ::selection { background: #8B7CF6; color: #0B0D12; }
+</style>
+</head>
+<body class="bg-base text-ink font-sans antialiased bg-noise min-h-screen">
+
+<!-- ================= TOASTS ================= -->
+<div id="toast-container" class="fixed bottom-4 right-4 left-4 sm:left-auto z-[100] flex flex-col gap-2 items-end pointer-events-none"></div>
+
+<div class="flex min-h-screen">
+
+  <!-- ================= DESKTOP SIDEBAR ================= -->
+  <aside class="hidden lg:flex w-64 shrink-0 flex-col border-r border-brd bg-elev/60 backdrop-blur px-4 py-6 sticky top-0 h-screen">
+    <div class="flex items-center gap-2.5 px-2 mb-8">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-violet via-amber to-teal flex items-center justify-center shrink-0">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 12L10 18L20 6" stroke="#0B0D12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="leading-tight">
+        <p class="font-display font-semibold text-sm tracking-tight">Creator Studio</p>
+        <p class="text-[11px] text-faint font-mono">all-in-one toolkit</p>
+      </div>
+    </div>
+
+    <nav class="flex flex-col gap-1" id="sidebar-nav">
+      <button data-cat="photo" class="nav-item active group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors" style="--accent:#8B7CF6;">
+        <span class="rail-dot w-2 h-2 rounded-full shrink-0" style="background:#8B7CF6;color:#8B7CF6;"></span>
+        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-4 4-3-3-6 6"/></svg>
+        Photo Tools
+      </button>
+      <button data-cat="video" class="nav-item group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors" style="--accent:#F5A524;">
+        <span class="rail-dot w-2 h-2 rounded-full shrink-0" style="background:#F5A524;color:#F5A524;"></span>
+        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="15" height="14" rx="2"/><path d="M17 9l5-3v12l-5-3"/></svg>
+        Video Tools
+      </button>
+      <button data-cat="pdf" class="nav-item group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors" style="--accent:#2DD4BF;">
+        <span class="rail-dot w-2 h-2 rounded-full shrink-0" style="background:#2DD4BF;color:#2DD4BF;"></span>
+        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v5h5"/><path d="M8.5 15.5h1a1.5 1.5 0 0 0 0-3h-1v5"/><path d="M13 12.5v5h1a2 2 0 0 0 0-5h-1z" opacity="0"/></svg>
+        PDF Tools
+      </button>
+    </nav>
+
+    <div class="mt-auto pt-6">
+      <div class="rounded-xl border border-brd bg-elev2 p-4">
+        <p class="text-xs font-semibold text-ink mb-1">Everything runs locally</p>
+        <p class="text-[11px] text-dim leading-relaxed">Files are processed in your browser tab and never uploaded to a server.</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <div class="flex-1 min-w-0 flex flex-col">
+
+    <!-- Top bar (mobile) -->
+    <header class="lg:hidden sticky top-0 z-40 flex items-center justify-between px-4 h-14 border-b border-brd bg-base/90 backdrop-blur">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-violet via-amber to-teal flex items-center justify-center">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 12L10 18L20 6" stroke="#0B0D12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <span class="font-display font-semibold text-sm">Creator Studio</span>
+      </div>
+    </header>
+
+    <!-- Hero / banner -->
+    <div class="px-4 sm:px-8 pt-6 sm:pt-8">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex flex-col gap-1.5 mb-5">
+          <p class="font-mono text-[11px] tracking-widest text-teal uppercase">Browser-based · No install</p>
+          <h1 class="font-display text-2xl sm:text-3xl font-semibold tracking-tight">All-in-One Creator Studio</h1>
+          <p class="text-dim text-sm max-w-xl">Edit photos, trim video, and manage PDFs without leaving the tab.</p>
+        </div>
+
+        <!-- No signup banner -->
+        <div class="flex items-center gap-3 rounded-xl border border-teal/25 bg-teal-soft px-4 py-3 mb-6">
+          <svg class="w-5 h-5 text-teal shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+          <p class="text-sm text-ink"><span class="font-semibold">No signup required.</span> <span class="text-dim">100% free and secure — everything runs in your browser, files never leave your device.</span></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile category tabs -->
+    <div class="lg:hidden px-4 sm:px-8 -mt-1 mb-2">
+      <div class="max-w-6xl mx-auto flex gap-1 border-b border-brd overflow-x-auto">
+        <button data-cat="photo" class="mnav active tab-underline text-violet px-3 py-2.5 text-sm font-medium whitespace-nowrap">Photo Tools</button>
+        <button data-cat="video" class="mnav tab-underline text-amber px-3 py-2.5 text-sm font-medium whitespace-nowrap text-dim">Video Tools</button>
+        <button data-cat="pdf" class="mnav tab-underline text-teal px-3 py-2.5 text-sm font-medium whitespace-nowrap text-dim">PDF Tools</button>
+      </div>
+    </div>
+
+    <!-- Ad: leaderboard 728x90 -->
+    <div class="px-4 sm:px-8">
+      <div class="max-w-6xl mx-auto mb-6">
+        <div class="w-full flex justify-center">
+          <div class="w-full max-w-[728px] h-[90px] rounded-lg border border-dashed border-brd bg-elev/50 flex items-center justify-center text-faint text-xs font-mono">
+            Advertisement · 728×90
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content grid -->
+    <div class="px-4 sm:px-8 pb-16 flex-1">
+      <div class="max-w-6xl mx-auto grid grid-cols-1 xl:grid-cols-[1fr_300px] gap-6 items-start">
+
+        <!-- ===================== TOOL PANELS ===================== -->
+        <main class="min-w-0 flex flex-col gap-5">
+
+          <!-- ============ PHOTO PANEL ============ -->
+          <section id="panel-photo" class="panel active fade-in flex flex-col gap-5">
+
+            <!-- Background Remover (mockup) -->
+            <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
+              <div class="h-1 bg-violet"></div>
+              <div class="p-5 sm:p-6">
+                <div class="flex items-start justify-between gap-3 mb-4">
+                  <div>
+                    <h2 class="font-display font-semibold text-lg">Background Remover</h2>
+                    <p class="text-dim text-sm mt-0.5">Cut out the subject and drop in a transparent background.</p>
+                  </div>
+                  <span class="shrink-0 text-[10px] font-mono uppercase tracking-wide px-2 py-1 rounded-full bg-elev3 text-faint">Preview demo</span>
+                </div>
+
+                <div class="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <div id="bgr-drop" class="dropzone relative rounded-xl border-2 border-dashed border-brd text-violet aspect-video flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-elev2 transition-colors overflow-hidden">
+                      <input id="bgr-input" type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
+                      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+                      <p class="text-xs text-dim px-4 text-center">Drop an image or <span class="text-violet font-medium">browse</span></p>
+                      <canvas id="bgr-canvas-in" class="hidden absolute inset-0 w-full h-full object-contain"></canvas>
+                    </div>
+                    <button id="bgr-run" disabled class="mt-3 w-full py-2.5 rounded-lg bg-violet text-[#0B0D12] text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-110 transition">Remove Background</button>
+                  </div>
+
+                  <div>
+                    <div class="checker rounded-xl aspect-video flex items-center justify-center relative overflow-hidden border border-brd">
+                      <canvas id="bgr-canvas-out" class="hidden w-full h-full object-contain"></canvas>
+                      <p id="bgr-placeholder" class="text-faint text-xs font-mono">Result preview</p>
+                      <div id="bgr-progress" class="hidden absolute inset-x-3 bottom-3 h-1.5 rounded-full bg-elev3 overflow-hidden">
+                        <div class="scan-bar relative h-full w-full bg-violet/30"></div>
+                      </div>
+                    </div>
+                    <button id="bgr-download" disabled class="mt-3 w-full py-2.5 rounded-lg border border-brd text-sm font-semibold text-dim disabled:opacity-40 hover:text-ink hover:border-violet/50 transition">Download PNG</button>
+                  </div>
+                </div>
+                <p class="text-[11px] text-faint mt-3">Demo preview — approximates a cutout using an edge mask so you can try the workflow.</p>
+              </div>
+            </div>
+
+            <!-- Resizer & Cropper -->
+            <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
+              <div class="h-1 bg-violet"></div>
+              <div class="p-5 sm:p-6">
+                <div class="mb-4">
+                  <h2 class="font-display font-semibold text-lg">Image Resizer &amp; Cropper</h2>
+                  <p class="text-dim text-sm mt-0.5">Drag to crop, set exact output dimensions, export instantly.</p>
+                </div>
+
+                <div id="crop-empty" class="dropzone relative rounded-xl border-2 border-dashed border-brd text-violet aspect-video flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-elev2 transition-colors">
+                  <input id="crop-input" type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
+                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2v14a2 2 0 002 2h14"/><path d="M18 22V8a2 2 0 00-2-2H2"/></svg>
+                  <p class="text-xs text-dim px-4 text-center">Drop an image or <span class="text-violet font-medium">browse</span> to start cropping</p>
+                </div>
+
+                <div id="crop-workspace" class="hidden">
+                  <div class="grid lg:grid-cols-[1fr_220px] gap-4">
+                    <div id="crop-stage" class="relative w-full rounded-xl overflow-hidden bg-elev2 border border-brd select-none" style="touch-action:none;">
+                      <img id="crop-img" class="w-full h-full block pointer-events-none select-none" draggable="false">
+                      <div id="crop-box" class="crop-handle absolute border-2 border-violet cursor-move" style="box-shadow:0 0 0 9999px rgba(0,0,0,.55);">
+                        <div id="crop-resize" class="crop-handle absolute -right-1.5 -bottom-1.5 w-4 h-4 rounded-sm bg-violet cursor-se-resize"></div>
+                      </div>
+                    </div>
+
+                    <div class="flex flex-col gap-3">
+                      <div>
+                        <label class="text-[11px] font-mono text-faint uppercase">Aspect</label>
+                        <div class="grid grid-cols-4 gap-1.5 mt-1.5">
+                          <button data-ratio="0" class="ratio-btn py-1.5 rounded-md bg-elev3 border border-brd text-[11px] hover:border-violet/50">Free</button>
+                          <button data-ratio="1" class="ratio-btn py-1.5 rounded-md bg-elev3 border border-brd text-[11px] hover:border-violet/50">1:1</button>
+                          <button data-ratio="1.3333" class="ratio-btn py-1.5 rounded-md bg-elev3 border border-brd text-[11px] hover:border-violet/50">4:3</button>
+                          <button data-ratio="1.7778" class="ratio-btn py-1.5 rounded-md bg-elev3 border border-brd text-[11px] hover:border-violet/50">16:9</button>
+                        </div>
+                      </div>
+                      <div class="grid grid-cols-2 gap-2">
+                        <div>
+                          <label class="text-[11px] font-mono text-faint uppercase">Width</label>
+                          <input id="crop-w" type="number" min="1" class="w-full mt-1 bg-elev3 border border-brd rounded-md px-2 py-1.5 text-sm font-mono focus:outline-none focus:border-violet">
+                        </div>
+                        <div>
+                          <label class="text-[11px] font-mono text-faint uppercase">Height</label>
+                          <input id="crop-h" type="number" min="1" class="w-full mt-1 bg-elev3 border border-brd rounded-md px-2 py-1.5 text-sm font-mono focus:outline-none focus:border-violet">
+                        </div>
+                      </div>
+                      <label class="flex items-center gap-2 text-xs text-dim">
+                        <input id="crop-lock" type="checkbox" checked class="accent-violet w-3.5 h-3.5"> Lock aspect ratio
+                      </label>
+                      <button id="crop-apply" class="mt-1 w-full py-2.5 rounded-lg bg-violet text-[#0B0D12] text-sm font-semibold hover:brightness-110 transition">Apply Crop &amp; Resize</button>
+                      <button id="crop-reset" class="w-full py-2 rounded-lg border border-brd text-xs text-dim hover:text-ink transition">Upload another image</button>
+                    </div>
+                  </div>
+
+                  <div id="crop-result" class="hidden mt-4 rounded-xl border border-brd bg-elev2 p-4">
+                    <div class="flex items-center justify-between mb-3">
+                      <p class="text-sm font-medium">Result</p>
+                      <span id="crop-result-dims" class="text-[11px] font-mono text-faint"></span>
+                    </div>
+                    <div class="checker rounded-lg overflow-hidden border border-brd max-h-64 flex items-center justify-center">
+                      <canvas id="crop-canvas" class="max-w-full max-h-64"></canvas>
+                    </div>
+                    <a id="crop-download" download="cropped-image.png" class="mt-3 inline-flex w-full justify-center py-2.5 rounded-lg bg-elev3 border border-brd text-sm font-semibold hover:border-violet/50 transition">Download PNG</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Filter & Brightness Adjuster -->
+            <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
+              <div class="h-1 bg-violet"></div>
+              <div class="p-5 sm:p-6">
+                <div class="mb-4">
+                  <h2 class="font-display font-semibold text-lg">Filter &amp; Brightness Adjuster</h2>
+                  <p class="text-dim text-sm mt-0.5">Live canvas filters — brightness, contrast, saturation and blur.</p>
+                </div>
+
+                <div id="filt-empty" class="dropzone relative rounded-xl border-2 border-dashed border-brd text-violet aspect-video flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-elev2 transition-colors">
+                  <input id="filt-input" type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
+                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+                  <p class="text-xs text-dim px-4 text-center">Drop an image or <span class="text-violet font-medium">browse</span></p>
+                </div>
+
+                <div id="filt-workspace" class="hidden grid lg:grid-cols-[1fr_240px] gap-4">
+                  <div class="rounded-xl overflow-hidden border border-brd bg-elev2 flex items-center justify-center">
+                    <canvas id="filt-canvas" class="max-w-full max-h-[420px]"></canvas>
+                  </div>
+                  <div class="flex flex-col gap-4">
+                    <div>
+                      <div class="flex justify-between text-[11px] font-mono text-faint uppercase mb-1"><span>Brightness</span><span id="filt-brightness-v">100%</span></div>
+                      <input id="filt-brightness" type="range" min="0" max="200" value="100" class="w-full accent-violet">
+                    </div>
+                    <div>
+                      <div class="flex justify-between text-[11px] font-mono text-faint uppercase mb-1"><span>Contrast</span><span id="filt-contrast-v">100%</span></div>
+                      <input id="filt-contrast" type="range" min="0" max="200" value="100" class="w-full accent-violet">
+                    </div>
+                    <div>
+                      <div class="flex justify-between text-[11px] font-mono text-faint uppercase mb-1"><span>Saturation</span><span id="filt-saturate-v">100%</span></div>
+                      <input id="filt-saturate" type="range" min="0" max="200" value="100" class="w-full accent-violet">
+                    </div>
+                    <div>
+                      <div class="flex justify-between text-[11px] font-mono text-faint uppercase mb-1"><span>Blur</span><span id="filt-blur-v">0px</span></div>
+                      <input id="filt-blur" type="range" min="0" max="10" value="0" class="w-full accent-violet">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mt-1">
+                      <button id="filt-reset" class="py-2 rounded-lg border border-brd text-xs text-dim hover:text-ink transition">Reset</button>
+                      <a id="filt-download" download="filtered-image.png" class="py-2 rounded-lg bg-violet text-[#0B0D12] text-xs font-semibold text-center hover:brightness-110 transition">Download</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============ VIDEO PANEL ============ -->
+          <section id="panel-video" class="panel fade-in flex flex-col gap-5">
+
+            <!-- Trim & Cut -->
+            <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
+              <div class="h-1 bg-amber"></div>
+              <div class="p-5 sm:p-6">
+                <div class="mb-4">
+                  <h2 class="font-display font-semibold text-lg">Video Trim &amp; Cut</h2>
+                  <p class="text-dim text-sm mt-0.5">Pick in/out points and preview the selected range instantly.</p>
+                </div>
+
+                <div id="trim-empty" class="dropzone relative rounded-xl border-2 border-dashed border-brd text-amber aspect-video flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-elev2 transition-colors">
+                  <input id="trim-input" type="file" accept="video/*" class="absolute inset-0 opacity-0 cursor-pointer">
+                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="15" height="14" rx="2"/><path d="M17 9l5-3v12l-5-3"/></svg>
+                  <p class="text-xs text-dim px-4 text-center">Drop a video or <span class="text-amber font-medium">browse</span></p>
+                </div>
+
+                <div id="trim-workspace" class="hidden">
+                  <video id="trim-video" class="w-full rounded-xl border border-brd bg-black max-h-[380px]" controls></video>
+
+                  <div class="mt-4">
+                    <div class="relative h-8 flex items-center">
+                      <div class="absolute inset-x-0 h-1.5 rounded-full bg-elev3"></div>
+                      <div id="trim-range-fill" class="absolute h-1.5 rounded-full bg-amber"></div>
+                      <input id="trim-start" type="range" min="0" max="100" value="0" class="absolute w-full accent-amber pointer-events-none">
+                      <input id="trim-end" type="range" min="0" max="100" value="100" class="absolute w-full accent-amber pointer-events-none">
+                    </div>
+                    <div class="flex justify-between text-[11px] font-mono text-faint mt-1">
+                      <span id="trim-start-label">0:00</span>
+                      <span id="trim-duration-label" class="text-dim">selected: 0:00</span>
+                      <span id="trim-end-label">0:00</span>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-wrap gap-2 mt-4">
+                    <button id="trim-set-start" class="px-3 py-2 rounded-lg border border-brd text-xs hover:border-amber/50 transition">Set start at playhead</button>
+                    <button id="trim-set-end" class="px-3 py-2 rounded-lg border border-brd text-xs hover:border-amber/50 transition">Set end at playhead</button>
+                    <button id="trim-preview" class="px-3 py-2 rounded-lg border border-brd text-xs hover:border-amber/50 transition">Preview selection</button>
+                    <button id="trim-export" class="ml-auto px-4 py-2 rounded-lg bg-amber text-[#0B0D12] text-xs font-semibold hover:brightness-110 transition">Export Trimmed Clip</button>
+                  </div>
+                  <div id="trim-progress-wrap" class="hidden mt-3 h-1.5 rounded-full bg-elev3 overflow-hidden relative">
+                    <div class="scan-bar relative h-full w-full bg-amber/30"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Video to GIF -->
+            <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
+              <div class="h-1 bg-amber"></div>
+              <div class="p-5 sm:p-6">
+                <div class="mb-4">
+                  <h2 class="font-display font-semibold text-lg">Video to GIF Converter</h2>
+                  <p class="text-dim text-sm mt-0.5">Turn a clip into a lightweight, shareable GIF.</p>
+                </div>
+
+                <div class="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <div id="gif-empty" class="dropzone relative rounded-xl border-2 border-dashed border-brd text-amber aspect-video flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-elev2 transition-colors overflow-hidden">
+                      <input id="gif-input" type="file" accept="video/*" class="absolute inset-0 opacity-0 cursor-pointer">
+                      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                      <p class="text-xs text-dim px-4 text-center">Drop a video or <span class="text-amber font-medium">browse</span></p>
+                      <video id="gif-video" class="hidden absolute inset-0 w-full h-full object-cover"></video>
+                    </div>
+
+                    <div class="mt-3 grid grid-cols-2 gap-3">
+                      <div>
+                        <div class="flex justify-between text-[11px] font-mono text-faint uppercase mb-1"><span>FPS</span><span id="gif-fps-v">10</span></div>
+                        <input id="gif-fps" type="range" min="5" max="24" value="10" class="w-full accent-amber">
+                      </div>
+                      <div>
+                        <div class="flex justify-between text-[11px] font-mono text-faint uppercase mb-1"><span>Quality</span><span id="gif-quality-v">Medium</span></div>
+                        <input id="gif-quality" type="range" min="1" max="3" value="2" class="w-full accent-amber">
+                      </div>
+                    </div>
+                    <button id="gif-run" disabled class="mt-3 w-full py-2.5 rounded-lg bg-amber text-[#0B0D12] text-sm font-semibold disabled:opacity-40 hover:brightness-110 transition">Convert to GIF</button>
+                  </div>
+
+                  <div>
+                    <div class="checker rounded-xl aspect-video flex items-center justify-center relative overflow-hidden border border-brd">
+                      <canvas id="gif-thumb" class="hidden w-full h-full object-cover"></canvas>
+                      <p id="gif-placeholder" class="text-faint text-xs font-mono">GIF preview</p>
+                      <div id="gif-progress" class="hidden absolute inset-x-3 bottom-3 h-1.5 rounded-full bg-elev3 overflow-hidden">
+                        <div class="scan-bar relative h-full w-full bg-amber/30"></div>
+                      </div>
+                      <span id="gif-badge" class="hidden absolute top-2 left-2 text-[10px] font-mono bg-elev3/90 border border-brd rounded-full px-2 py-0.5">GIF · demo</span>
+                    </div>
+                    <button id="gif-download" disabled class="mt-3 w-full py-2.5 rounded-lg border border-brd text-sm font-semibold text-dim disabled:opacity-40 hover:text-ink hover:border-amber/50 transition">Download GIF</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Speed Controller -->
+            <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
+              <div class="h-1 bg-amber"></div>
+              <div class="p-5 sm:p-6">
+                <div class="mb-4">
+                  <h2 class="font-display font-semibold text-lg">Speed Controller</h2>
+                  <p class="text-dim text-sm mt-0.5">Play back a clip slow-motion or sped up in real time.</p>
+                </div>
+
+                <div id="speed-empty" class="dropzone relative rounded-xl border-2 border-dashed border-brd text-amber aspect-video flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-elev2 transition-colors">
+                  <input id="speed-input" type="file" accept="video/*" class="absolute inset-0 opacity-0 cursor-pointer">
+                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                  <p class="text-xs text-dim px-4 text-center">Drop a video or <span class="text-amber font-medium">browse</span></p>
+                </div>
+
+                <div id="speed-workspace" class="hidden">
+                  <video id="speed-video" class="w-full rounded-xl border border-brd bg-black max-h-[360px]" controls loop></video>
+                  <div class="mt-4 flex items-center gap-4">
+                    <span class="text-[11px] font-mono text-faint">0.25x</span>
+                    <input id="speed-range" type="range" min="0.25" max="2" step="0.05" value="1" class="flex-1 accent-amber">
+                    <span class="text-[11px] font-mono text-faint">2x</span>
+                  </div>
+                  <div class="flex items-center justify-between mt-2">
+                    <div class="flex gap-1.5">
+                      <button data-speed="0.5" class="speed-preset px-2.5 py-1 rounded-md bg-elev3 border border-brd text-[11px] hover:border-amber/50">0.5x</button>
+                      <button data-speed="1" class="speed-preset px-2.5 py-1 rounded-md bg-elev3 border border-brd text-[11px] hover:border-amber/50">1x</button>
+                      <button data-speed="1.5" class="speed-preset px-2.5 py-1 rounded-md bg-elev3 border border-brd text-[11px] hover:border-amber/50">1.5x</button>
+                      <button data-speed="2" class="speed-preset px-2.5 py-1 rounded-md bg-elev3 border border-brd text-[11px] hover:border-amber/50">2x</button>
+                    </div>
+                    <span id="speed-current" class="font-mono text-sm text-amber font-medium">1.00x</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============ PDF PANEL ============ -->
+          <section id="panel-pdf" class="panel fade-in flex flex-col gap-5">
+
+            <!-- PDF to Word/Image -->
+            <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
+              <div class="h-1 bg-teal"></div>
+              <div class="p-5 sm:p-6">
+                <div class="mb-4">
+                  <h2 class="font-display font-semibold text-lg">PDF to Word / Image Converter</h2>
+                  <p class="text-dim text-sm mt-0.5">Convert a PDF into an editable or shareable format.</p>
+                </div>
+
+                <div id="p2x-empty" class="dropzone relative rounded-xl border-2 border-dashed border-brd text-teal py-10 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-elev2 transition-colors">
+                  <input id="p2x-input" type="file" accept="application/pdf" class="absolute inset-0 opacity-0 cursor-pointer">
+                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v5h5"/></svg>
+                  <p class="text-xs text-dim px-4 text-center">Drop a PDF or <span class="text-teal font-medium">browse</span></p>
+                </div>
+
+                <div id="p2x-workspace" class="hidden">
+                  <div class="flex items-center gap-3 rounded-lg border border-brd bg-elev2 px-3 py-2.5">
+                    <svg class="w-5 h-5 text-teal shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v5h5"/></svg>
+                    <div class="min-w-0 flex-1">
+                      <p id="p2x-name" class="text-sm truncate"></p>
+                      <p id="p2x-size" class="text-[11px] text-faint font-mono"></p>
+                    </div>
+                    <button id="p2x-clear" class="text-faint hover:text-danger text-xs shrink-0">Remove</button>
+                  </div>
+
+                  <div class="flex flex-wrap items-center gap-3 mt-4">
+                    <label class="text-xs text-dim">Convert to</label>
+                    <select id="p2x-format" class="bg-elev3 border border-brd rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal">
+                      <option value="docx">Word (.docx)</option>
+                      <option value="jpg">Image (.jpg)</option>
+                      <option value="png">Image (.png)</option>
+                      <option value="xlsx">Excel (.xlsx)</option>
+                    </select>
+                    <button id="p2x-run" class="ml-auto px-4 py-2 rounded-lg bg-teal text-[#0B0D12] text-sm font-semibold hover:brightness-110 transition">Convert</button>
+                  </div>
+
+                  <div id="p2x-progress-wrap" class="hidden mt-3 h-1.5 rounded-full bg-elev3 overflow-hidden relative">
+                    <div class="scan-bar relative h-full w-full bg-teal/30"></div>
+                  </div>
+                  <div id="p2x-result" class="hidden mt-3 flex items-center justify-between rounded-lg border border-teal/25 bg-teal-soft px-3 py-2.5">
+                    <p id="p2x-result-name" class="text-sm"></p>
+                    <button id="p2x-download" class="text-xs font-semibold text-teal hover:underline shrink-0">Download</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Merge PDF -->
+            <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
+              <div class="h-1 bg-teal"></div>
+              <div class="p-5 sm:p-6">
+                <div class="mb-4">
+                  <h2 class="font-display font-semibold text-lg">Merge PDF</h2>
+                  <p class="text-dim text-sm mt-0.5">Combine multiple PDFs into a single document, in any order.</p>
+                </div>
+
+                <div id="merge-drop" class="dropzone relative rounded-xl border-2 border-dashed border-brd text-teal py-8 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-elev2 transition-colors">
+                  <input id="merge-input" type="file" accept="application/pdf" multiple class="absolute inset-0 opacity-0 cursor-pointer">
+                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="12" height="16" rx="1.5"/><rect x="10" y="7" width="12" height="16" rx="1.5" fill="#171B24"/></svg>
+                  <p class="text-xs text-dim px-4 text-center">Drop PDFs or <span class="text-teal font-medium">browse</span> — you can add several</p>
+                </div>
+
+                <ul id="merge-list" class="flex flex-col gap-2 mt-4"></ul>
+
+                <div id="merge-footer" class="hidden flex flex-wrap items-center gap-3 mt-4 pt-4 border-t border-brd">
+                  <p class="text-[11px] text-faint font-mono">Total: <span id="merge-total">0</span> files · <span id="merge-size">0 KB</span></p>
+                  <button id="merge-run" class="ml-auto px-4 py-2 rounded-lg bg-teal text-[#0B0D12] text-sm font-semibold hover:brightness-110 transition">Merge PDFs</button>
+                </div>
+                <div id="merge-progress-wrap" class="hidden mt-3 h-1.5 rounded-full bg-elev3 overflow-hidden relative">
+                  <div class="scan-bar relative h-full w-full bg-teal/30"></div>
+                </div>
+                <div id="merge-result" class="hidden mt-3 flex items-center justify-between rounded-lg border border-teal/25 bg-teal-soft px-3 py-2.5">
+                  <p class="text-sm">merged-document.pdf</p>
+                  <button id="merge-download" class="text-xs font-semibold text-teal hover:underline shrink-0">Download</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Compress PDF -->
+            <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
+              <div class="h-1 bg-teal"></div>
+              <div class="p-5 sm:p-6">
+                <div class="mb-4">
+                  <h2 class="font-display font-semibold text-lg">Compress PDF</h2>
+                  <p class="text-dim text-sm mt-0.5">Shrink file size for easier sharing and uploads.</p>
+                </div>
+
+                <div id="comp-empty" class="dropzone relative rounded-xl border-2 border-dashed border-brd text-teal py-10 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-elev2 transition-colors">
+                  <input id="comp-input" type="file" accept="application/pdf" class="absolute inset-0 opacity-0 cursor-pointer">
+                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>
+                  <p class="text-xs text-dim px-4 text-center">Drop a PDF or <span class="text-teal font-medium">browse</span></p>
+                </div>
+
+                <div id="comp-workspace" class="hidden">
+                  <div class="flex items-center gap-3 rounded-lg border border-brd bg-elev2 px-3 py-2.5">
+                    <svg class="w-5 h-5 text-teal shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v5h5"/></svg>
+                    <div class="min-w-0 flex-1">
+                      <p id="comp-name" class="text-sm truncate"></p>
+                      <p id="comp-size" class="text-[11px] text-faint font-mono"></p>
+                    </div>
+                    <button id="comp-clear" class="text-faint hover:text-danger text-xs shrink-0">Remove</button>
+                  </div>
+
+                  <div class="mt-4">
+                    <label class="text-[11px] font-mono text-faint uppercase">Compression level</label>
+                    <input id="comp-level" type="range" min="1" max="3" value="2" class="w-full mt-2 accent-teal">
+                    <div class="flex justify-between text-[11px] text-dim mt-1">
+                      <span>Low</span><span>Medium</span><span>High</span>
+                    </div>
+                  </div>
+
+                  <button id="comp-run" class="mt-4 w-full py-2.5 rounded-lg bg-teal text-[#0B0D12] text-sm font-semibold hover:brightness-110 transition">Compress PDF</button>
+                  <div id="comp-progress-wrap" class="hidden mt-3 h-1.5 rounded-full bg-elev3 overflow-hidden relative">
+                    <div class="scan-bar relative h-full w-full bg-teal/30"></div>
+                  </div>
+
+                  <div id="comp-result" class="hidden mt-4 grid grid-cols-2 gap-3">
+                    <div class="rounded-lg border border-brd bg-elev2 p-3 text-center">
+                      <p class="text-[11px] text-faint font-mono uppercase">Original</p>
+                      <p id="comp-original-size" class="text-lg font-display font-semibold mt-1"></p>
+                    </div>
+                    <div class="rounded-lg border border-teal/25 bg-teal-soft p-3 text-center">
+                      <p class="text-[11px] text-faint font-mono uppercase">Estimated</p>
+                      <p id="comp-new-size" class="text-lg font-display font-semibold text-teal mt-1"></p>
+                    </div>
+                    <button id="comp-download" class="col-span-2 py-2.5 rounded-lg border border-teal/25 bg-teal-soft text-teal text-sm font-semibold hover:brightness-110 transition">Download Compressed PDF</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Password Protect / Unlock -->
+            <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
+              <div class="h-1 bg-teal"></div>
+              <div class="p-5 sm:p-6">
+                <div class="mb-4">
+                  <h2 class="font-display font-semibold text-lg">PDF Password Protect / Unlock</h2>
+                  <p class="text-dim text-sm mt-0.5">Lock a PDF with a password, or remove one you already know.</p>
+                </div>
+
+                <div class="flex gap-1 border-b border-brd mb-4">
+                  <button data-pptab="protect" class="pptab active tab-underline text-teal px-3 py-2 text-sm font-medium">Protect</button>
+                  <button data-pptab="unlock" class="pptab tab-underline text-teal px-3 py-2 text-sm font-medium text-dim">Unlock</button>
+                </div>
+
+                <!-- Protect -->
+                <div id="pp-protect" class="pp-panel flex flex-col gap-4">
+                  <div id="prot-drop" class="dropzone relative rounded-xl border-2 border-dashed border-brd text-teal py-8 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-elev2 transition-colors">
+                    <input id="prot-input" type="file" accept="application/pdf" class="absolute inset-0 opacity-0 cursor-pointer">
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+                    <p id="prot-drop-text" class="text-xs text-dim px-4 text-center">Drop a PDF or <span class="text-teal font-medium">browse</span></p>
+                  </div>
+
+                  <div class="grid sm:grid-cols-2 gap-3">
+                    <div class="relative">
+                      <label class="text-[11px] font-mono text-faint uppercase">Password</label>
+                      <input id="prot-pass" type="password" placeholder="Enter password" class="w-full mt-1 bg-elev3 border border-brd rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal">
+                      <button id="prot-toggle" type="button" class="absolute right-2 top-[27px] text-faint hover:text-ink text-xs">Show</button>
+                    </div>
+                    <div>
+                      <label class="text-[11px] font-mono text-faint uppercase">Confirm password</label>
+                      <input id="prot-confirm" type="password" placeholder="Re-enter password" class="w-full mt-1 bg-elev3 border border-brd rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal">
+                    </div>
+                  </div>
+
+                  <div>
+                    <div class="h-1.5 rounded-full bg-elev3 overflow-hidden flex gap-0.5">
+                      <div id="strength-bar" class="h-full bg-danger transition-all" style="width:0%"></div>
+                    </div>
+                    <p id="strength-label" class="text-[11px] text-faint mt-1 font-mono">Password strength</p>
+                  </div>
+
+                  <button id="prot-run" class="py-2.5 rounded-lg bg-teal text-[#0B0D12] text-sm font-semibold hover:brightness-110 transition">Protect PDF</button>
+                  <div id="prot-progress-wrap" class="hidden h-1.5 rounded-full bg-elev3 overflow-hidden relative -mt-2">
+                    <div class="scan-bar relative h-full w-full bg-teal/30"></div>
+                  </div>
+                  <div id="prot-result" class="hidden flex items-center justify-between rounded-lg border border-teal/25 bg-teal-soft px-3 py-2.5 -mt-2">
+                    <p class="text-sm">Protected file ready</p>
+                    <button id="prot-download" class="text-xs font-semibold text-teal hover:underline shrink-0">Download</button>
+                  </div>
+                </div>
+
+                <!-- Unlock -->
+                <div id="pp-unlock" class="pp-panel hidden flex-col gap-4">
+                  <div id="unlock-drop" class="dropzone relative rounded-xl border-2 border-dashed border-brd text-teal py-8 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-elev2 transition-colors">
+                    <input id="unlock-input" type="file" accept="application/pdf" class="absolute inset-0 opacity-0 cursor-pointer">
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 017.6-1.8"/></svg>
+                    <p id="unlock-drop-text" class="text-xs text-dim px-4 text-center">Drop a locked PDF or <span class="text-teal font-medium">browse</span></p>
+                  </div>
+                  <div>
+                    <label class="text-[11px] font-mono text-faint uppercase">Current password</label>
+                    <input id="unlock-pass" type="password" placeholder="Enter current password" class="w-full mt-1 bg-elev3 border border-brd rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal">
+                  </div>
+                  <button id="unlock-run" class="py-2.5 rounded-lg bg-teal text-[#0B0D12] text-sm font-semibold hover:brightness-110 transition">Unlock PDF</button>
+                  <div id="unlock-progress-wrap" class="hidden h-1.5 rounded-full bg-elev3 overflow-hidden relative -mt-2">
+                    <div class="scan-bar relative h-full w-full bg-teal/30"></div>
+                  </div>
+                  <div id="unlock-result" class="hidden flex items-center justify-between rounded-lg border border-teal/25 bg-teal-soft px-3 py-2.5 -mt-2">
+                    <p class="text-sm">Unlocked file ready</p>
+                    <button id="unlock-download" class="text-xs font-semibold text-teal hover:underline shrink-0">Download</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </main>
+
+        <!-- ===================== SIDEBAR AD + INFO ===================== -->
+        <aside class="flex flex-col gap-5 xl:sticky xl:top-6">
+          <div class="w-full h-[250px] max-w-[300px] mx-auto xl:mx-0 rounded-lg border border-dashed border-brd bg-elev/50 flex items-center justify-center text-faint text-xs font-mono">
+            Advertisement · 300×250
+          </div>
+
+          <div class="rounded-xl border border-brd bg-elev p-4">
+            <p class="text-xs font-semibold mb-2">Why it's private</p>
+            <ul class="text-[12px] text-dim flex flex-col gap-2">
+              <li class="flex gap-2"><span class="text-teal">•</span> No files touch a server</li>
+              <li class="flex gap-2"><span class="text-violet">•</span> No account or email needed</li>
+              <li class="flex gap-2"><span class="text-amber">•</span> Works offline once loaded</li>
+            </ul>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+
+    <footer class="border-t border-brd py-6 px-4 sm:px-8">
+      <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-faint font-mono">
+        <span>© 2026 All-in-One Creator Studio</span>
+        <span>Built for creators · No signup · Runs in your browser</span>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script>
+/* ============================= UTILITIES ============================= */
+function formatBytes(bytes) {
+  if (!bytes) return '0 KB';
+  const units = ['B','KB','MB','GB'];
+  let i = 0; let val = bytes;
+  while (val >= 1024 && i < units.length - 1) { val /= 1024; i++; }
+  return `${val.toFixed(val < 10 && i > 0 ? 1 : 0)} ${units[i]}`;
+}
+function formatTime(s) {
+  if (!isFinite(s) || s < 0) s = 0;
+  const m = Math.floor(s / 60); const sec = Math.floor(s % 60);
+  return `${m}:${sec.toString().padStart(2,'0')}`;
+}
+function showToast(msg, tone) {
+  const el = document.createElement('div');
+  const colors = { violet: '#8B7CF6', amber: '#F5A524', teal: '#2DD4BF', danger:'#FB7185' };
+  const c = colors[tone] || '#2DD4BF';
+  el.className = 'toast pointer-events-auto max-w-xs w-full sm:w-auto rounded-lg border bg-elev2 px-4 py-3 text-sm shadow-xl flex items-center gap-2';
+  el.style.borderColor = c + '55';
+  el.innerHTML = `<span style="color:${c}">●</span><span class="text-ink">${msg}</span>`;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(-8px)'; }, 2600);
+  setTimeout(() => el.remove(), 3000);
+}
+function simulateProgress(wrapEl, onDone, duration = 1400) {
+  wrapEl.classList.remove('hidden');
+  setTimeout(() => { wrapEl.classList.add('hidden'); onDone && onDone(); }, duration);
+}
+function initDropzone(dropEl, inputEl, onFile) {
+  dropEl.addEventListener('click', (e) => { if (e.target !== inputEl) inputEl.click(); });
+  ['dragenter','dragover'].forEach(ev => dropEl.addEventListener(ev, (e) => { e.preventDefault(); dropEl.classList.add('dragover'); }));
+  ['dragleave','drop'].forEach(ev => dropEl.addEventListener(ev, (e) => { e.preventDefault(); dropEl.classList.remove('dragover'); }));
+  dropEl.addEventListener('drop', (e) => {
+    const files = e.dataTransfer.files;
+    if (files && files.length) onFile(inputEl.multiple ? files : files[0]);
+  });
+  inputEl.addEventListener('change', () => {
+    if (!inputEl.files.length) return;
+    onFile(inputEl.multiple ? inputEl.files : inputEl.files[0]);
+  });
+}
+function demoDownload(btn, label, tone) {
+  btn.addEventListener('click', () => showToast(`${label} — connect a backend to enable real file export.`, tone));
+}
+
+/* ============================= NAVIGATION ============================= */
+const panels = { photo: document.getElementById('panel-photo'), video: document.getElementById('panel-video'), pdf: document.getElementById('panel-pdf') };
+function setCategory(cat) {
+  Object.entries(panels).forEach(([k, el]) => el.classList.toggle('active', k === cat));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+  document.querySelectorAll('.mnav').forEach(b => {
+    const isActive = b.dataset.cat === cat;
+    b.classList.toggle('active', isActive);
+    b.classList.toggle('text-dim', !isActive);
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+document.querySelectorAll('.nav-item, .mnav').forEach(btn => btn.addEventListener('click', () => setCategory(btn.dataset.cat)));
+
+/* ============================= PHOTO: BACKGROUND REMOVER (mock) ============================= */
+(() => {
+  const drop = document.getElementById('bgr-drop');
+  const input = document.getElementById('bgr-input');
+  const canvasIn = document.getElementById('bgr-canvas-in');
+  const canvasOut = document.getElementById('bgr-canvas-out');
+  const placeholder = document.getElementById('bgr-placeholder');
+  const runBtn = document.getElementById('bgr-run');
+  const dlBtn = document.getElementById('bgr-download');
+  const progress = document.getElementById('bgr-progress');
+  let img = new Image();
+
+  initDropzone(drop, input, (file) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      img = new Image();
+      img.onload = () => {
+        const ctx = canvasIn.getContext('2d');
+        const maxW = drop.clientWidth, maxH = drop.clientHeight;
+        const scale = Math.min(maxW / img.width, maxH / img.height);
+        canvasIn.width = img.width * scale; canvasIn.height = img.height * scale;
+        ctx.drawImage(img, 0, 0, canvasIn.width, canvasIn.height);
+        canvasIn.classList.remove('hidden');
+        drop.querySelector('svg').classList.add('hidden');
+        drop.querySelector('p').classList.add('hidden');
+        runBtn.disabled = false;
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  runBtn.addEventListener('click', () => {
+    runBtn.disabled = true;
+    simulateProgress(progress, () => {
+      const ctx = canvasOut.getContext('2d');
+      canvasOut.width = canvasIn.width; canvasOut.height = canvasIn.height;
+      ctx.drawImage(canvasIn, 0, 0);
+      ctx.globalCompositeOperation = 'destination-in';
+      const g = ctx.createRadialGradient(canvasOut.width/2, canvasOut.height/2, canvasOut.width*0.12, canvasOut.width/2, canvasOut.height/2, canvasOut.width*0.62);
+      g.addColorStop(0, 'rgba(255,255,255,1)');
+      g.addColorStop(0.75, 'rgba(255,255,255,1)');
+      g.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, canvasOut.width, canvasOut.height);
+      ctx.globalCompositeOperation = 'source-over';
+      canvasOut.classList.remove('hidden');
+      placeholder.classList.add('hidden');
+      dlBtn.disabled = false;
+      runBtn.disabled = false;
+      showToast('Background removed (demo preview)', 'violet');
+    }, 1600);
+  });
+
+  dlBtn.addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'background-removed.png';
+    link.href = canvasOut.toDataURL('image/png');
+    link.click();
+  });
+})();
+
+/* ============================= PHOTO: CROP & RESIZE ============================= */
+(() => {
+  const emptyEl = document.getElementById('crop-empty');
+  const input = document.getElementById('crop-input');
+  const workspace = document.getElementById('crop-workspace');
+  const stage = document.getElementById('crop-stage');
+  const imgEl = document.getElementById('crop-img');
+  const box = document.getElementById('crop-box');
+  const resizeHandle = document.getElementById('crop-resize');
+  const wInput = document.getElementById('crop-w');
+  const hInput = document.getElementById('crop-h');
+  const lock = document.getElementById('crop-lock');
+  const applyBtn = document.getElementById('crop-apply');
+  const resetBtn = document.getElementById('crop-reset');
+  const resultWrap = document.getElementById('crop-result');
+  const resultCanvas = document.getElementById('crop-canvas');
+  const resultDims = document.getElementById('crop-result-dims');
+  const downloadLink = document.getElementById('crop-download');
+
+  let natW = 0, natH = 0, scale = 1;
+  let cbox = { x: 0, y: 0, w: 0, h: 0 };
+  let ratio = 0;
+
+  initDropzone(emptyEl, input, (file) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      imgEl.onload = () => {
+        natW = imgEl.naturalWidth; natH = imgEl.naturalHeight;
+        emptyEl.classList.add('hidden');
+        workspace.classList.remove('hidden');
+        requestAnimationFrame(() => {
+          scale = stage.clientWidth / natW;
+          stage.style.height = (natH * scale) + 'px';
+          cbox = { x: stage.clientWidth * 0.15, y: (natH*scale) * 0.15, w: stage.clientWidth * 0.7, h: (natH*scale) * 0.7 };
+          syncInputsFromBox();
+          renderBox();
+        });
+      };
+      imgEl.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function clampBox() {
+    const cw = stage.clientWidth, ch = stage.clientHeight;
+    cbox.w = Math.min(cbox.w, cw); cbox.h = Math.min(cbox.h, ch);
+    cbox.x = Math.max(0, Math.min(cbox.x, cw - cbox.w));
+    cbox.y = Math.max(0, Math.min(cbox.y, ch - cbox.h));
+  }
+  function renderBox() {
+    clampBox();
+    box.style.left = cbox.x + 'px'; box.style.top = cbox.y + 'px';
+    box.style.width = cbox.w + 'px'; box.style.height = cbox.h + 'px';
+  }
+  function syncInputsFromBox() {
+    wInput.value = Math.round(cbox.w / scale);
+    hInput.value = Math.round(cbox.h / scale);
+  }
+
+  // Move
+  let dragging = null;
+  box.addEventListener('pointerdown', (e) => {
+    if (e.target === resizeHandle) return;
+    dragging = { startX: e.clientX, startY: e.clientY, ox: cbox.x, oy: cbox.y };
+    box.setPointerCapture(e.pointerId);
+  });
+  box.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    cbox.x = dragging.ox + (e.clientX - dragging.startX);
+    cbox.y = dragging.oy + (e.clientY - dragging.startY);
+    renderBox();
+  });
+  box.addEventListener('pointerup', () => { dragging = null; syncInputsFromBox(); });
+
+  // Resize
+  let resizing = null;
+  resizeHandle.addEventListener('pointerdown', (e) => {
+    e.stopPropagation();
+    resizing = { startX: e.clientX, startY: e.clientY, ow: cbox.w, oh: cbox.h };
+    resizeHandle.setPointerCapture(e.pointerId);
+  });
+  resizeHandle.addEventListener('pointermove', (e) => {
+    if (!resizing) return;
+    let nw = resizing.ow + (e.clientX - resizing.startX);
+    let nh = ratio ? nw / ratio : resizing.oh + (e.clientY - resizing.startY);
+    cbox.w = Math.max(30, nw); cbox.h = Math.max(30, nh);
+    renderBox();
+    syncInputsFromBox();
+  });
+  resizeHandle.addEventListener('pointerup', () => { resizing = null; });
+
+  document.querySelectorAll('.ratio-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.ratio-btn').forEach(b => b.classList.remove('border-violet','text-violet'));
+      btn.classList.add('border-violet','text-violet');
+      ratio = parseFloat(btn.dataset.ratio);
+      if (ratio) { cbox.h = cbox.w / ratio; renderBox(); syncInputsFromBox(); lock.checked = true; }
+      else { lock.checked = false; }
+    });
+  });
+
+  wInput.addEventListener('input', () => {
+    cbox.w = wInput.value * scale;
+    if (lock.checked) { const r = ratio || (cbox.h && wInput.__lastH ? wInput.__lastW/wInput.__lastH : cbox.w/cbox.h); cbox.h = cbox.w / (ratio || (cbox.w/ (hInput.value*scale || cbox.h))); }
+    renderBox();
+  });
+  hInput.addEventListener('input', () => {
+    cbox.h = hInput.value * scale;
+    renderBox();
+  });
+
+  applyBtn.addEventListener('click', () => {
+    const sx = cbox.x / scale, sy = cbox.y / scale, sw = cbox.w / scale, sh = cbox.h / scale;
+    const outW = parseInt(wInput.value) || Math.round(sw);
+    const outH = parseInt(hInput.value) || Math.round(sh);
+    resultCanvas.width = outW; resultCanvas.height = outH;
+    const ctx = resultCanvas.getContext('2d');
+    ctx.drawImage(imgEl, sx, sy, sw, sh, 0, 0, outW, outH);
+    resultWrap.classList.remove('hidden');
+    resultDims.textContent = `${outW} × ${outH}px`;
+    downloadLink.href = resultCanvas.toDataURL('image/png');
+    showToast('Crop applied — result ready to download', 'violet');
+  });
+
+  resetBtn.addEventListener('click', () => {
+    workspace.classList.add('hidden');
+    resultWrap.classList.add('hidden');
+    emptyEl.classList.remove('hidden');
+    input.value = '';
+  });
+})();
+
+/* ============================= PHOTO: FILTER & BRIGHTNESS ============================= */
+(() => {
+  const emptyEl = document.getElementById('filt-empty');
+  const input = document.getElementById('filt-input');
+  const workspace = document.getElementById('filt-workspace');
+  const canvas = document.getElementById('filt-canvas');
+  const ctx = canvas.getContext('2d');
+  let img = new Image();
+
+  const sliders = ['brightness','contrast','saturate','blur'].map(id => ({
+    id, el: document.getElementById('filt-' + id), label: document.getElementById('filt-' + id + '-v')
+  }));
+
+  function draw() {
+    const b = document.getElementById('filt-brightness').value;
+    const c = document.getElementById('filt-contrast').value;
+    const s = document.getElementById('filt-saturate').value;
+    const bl = document.getElementById('filt-blur').value;
+    document.getElementById('filt-brightness-v').textContent = b + '%';
+    document.getElementById('filt-contrast-v').textContent = c + '%';
+    document.getElementById('filt-saturate-v').textContent = s + '%';
+    document.getElementById('filt-blur-v').textContent = bl + 'px';
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.filter = `brightness(${b}%) contrast(${c}%) saturate(${s}%) blur(${bl}px)`;
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  }
+
+  initDropzone(emptyEl, input, (file) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      img = new Image();
+      img.onload = () => {
+        const maxW = 640;
+        const scale = Math.min(1, maxW / img.width);
+        canvas.width = img.width * scale; canvas.height = img.height * scale;
+        emptyEl.classList.add('hidden');
+        workspace.classList.remove('hidden');
+        workspace.classList.add('grid');
+        draw();
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  sliders.forEach(s => s.el.addEventListener('input', draw));
+
+  document.getElementById('filt-reset').addEventListener('click', () => {
+    document.getElementById('filt-brightness').value = 100;
+    document.getElementById('filt-contrast').value = 100;
+    document.getElementById('filt-saturate').value = 100;
+    document.getElementById('filt-blur').value = 0;
+    draw();
+  });
+
+  document.getElementById('filt-download').addEventListener('click', (e) => {
+    e.currentTarget.href = canvas.toDataURL('image/png');
+  });
+})();
+
+/* ============================= VIDEO: TRIM & CUT ============================= */
+(() => {
+  const emptyEl = document.getElementById('trim-empty');
+  const input = document.getElementById('trim-input');
+  const workspace = document.getElementById('trim-workspace');
+  const video = document.getElementById('trim-video');
+  const startRange = document.getElementById('trim-start');
+  const endRange = document.getElementById('trim-end');
+  const fill = document.getElementById('trim-range-fill');
+  const startLabel = document.getElementById('trim-start-label');
+  const endLabel = document.getElementById('trim-end-label');
+  const durLabel = document.getElementById('trim-duration-label');
+  const progressWrap = document.getElementById('trim-progress-wrap');
+  let duration = 0, previewing = false;
+
+  initDropzone(emptyEl, input, (file) => {
+    video.src = URL.createObjectURL(file);
+    emptyEl.classList.add('hidden');
+    workspace.classList.remove('hidden');
+  });
+
+  video.addEventListener('loadedmetadata', () => {
+    duration = video.duration;
+    startRange.value = 0; endRange.value = 100;
+    updateLabels();
+  });
+
+  function updateLabels() {
+    const s = (startRange.value / 100) * duration;
+    const en = (endRange.value / 100) * duration;
+    startLabel.textContent = formatTime(s);
+    endLabel.textContent = formatTime(en);
+    durLabel.textContent = 'selected: ' + formatTime(Math.max(0, en - s));
+    fill.style.left = startRange.value + '%';
+    fill.style.width = Math.max(0, endRange.value - startRange.value) + '%';
+    startRange.style.zIndex = startRange.value > 90 ? 5 : 3;
+  }
+  [startRange, endRange].forEach(r => r.addEventListener('input', () => {
+    if (parseFloat(startRange.value) > parseFloat(endRange.value) - 2) {
+      if (r === startRange) startRange.value = endRange.value - 2 < 0 ? 0 : +endRange.value - 2;
+      else endRange.value = +startRange.value + 2 > 100 ? 100 : +startRange.value + 2;
+    }
+    updateLabels();
+  }));
+
+  document.getElementById('trim-set-start').addEventListener('click', () => {
+    startRange.value = (video.currentTime / duration) * 100; updateLabels();
+  });
+  document.getElementById('trim-set-end').addEventListener('click', () => {
+    endRange.value = (video.currentTime / duration) * 100; updateLabels();
+  });
+
+  document.getElementById('trim-preview').addEventListener('click', () => {
+    const s = (startRange.value / 100) * duration;
+    const en = (endRange.value / 100) * duration;
+    video.currentTime = s;
+    video.play();
+    previewing = true;
+    const onTime = () => {
+      if (!previewing) return;
+      if (video.currentTime >= en) { video.pause(); previewing = false; video.removeEventListener('timeupdate', onTime); }
+    };
+    video.addEventListener('timeupdate', onTime);
+  });
+
+  document.getElementById('trim-export').addEventListener('click', () => {
+    simulateProgress(progressWrap, () => showToast('Trimmed clip ready — export requires a backend in this demo.', 'amber'), 1500);
+  });
+})();
+
+/* ============================= VIDEO: TO GIF ============================= */
+(() => {
+  const emptyEl = document.getElementById('gif-empty');
+  const input = document.getElementById('gif-input');
+  const videoEl = document.getElementById('gif-video');
+  const thumb = document.getElementById('gif-thumb');
+  const placeholder = document.getElementById('gif-placeholder');
+  const runBtn = document.getElementById('gif-run');
+  const dlBtn = document.getElementById('gif-download');
+  const progress = document.getElementById('gif-progress');
+  const badge = document.getElementById('gif-badge');
+
+  document.getElementById('gif-fps').addEventListener('input', (e) => document.getElementById('gif-fps-v').textContent = e.target.value);
+  document.getElementById('gif-quality').addEventListener('input', (e) => {
+    document.getElementById('gif-quality-v').textContent = ['Low','Medium','High'][e.target.value - 1];
+  });
+
+  initDropzone(emptyEl, input, (file) => {
+    videoEl.src = URL.createObjectURL(file);
+    videoEl.classList.remove('hidden');
+    emptyEl.querySelector('svg').classList.add('hidden');
+    emptyEl.querySelector('p').classList.add('hidden');
+    runBtn.disabled = false;
+    videoEl.addEventListener('loadeddata', () => { videoEl.currentTime = 0.1; }, { once: true });
+  });
+
+  runBtn.addEventListener('click', () => {
+    runBtn.disabled = true;
+    simulateProgress(progress, () => {
+      const ctx = thumb.getContext('2d');
+      thumb.width = 320; thumb.height = 180;
+      try { ctx.drawImage(videoEl, 0, 0, thumb.width, thumb.height); } catch (e) {}
+      thumb.classList.remove('hidden');
+      placeholder.classList.add('hidden');
+      badge.classList.remove('hidden');
+      dlBtn.disabled = false;
+      runBtn.disabled = false;
+      showToast('GIF generated (demo preview)', 'amber');
+    }, 1800);
+  });
+
+  demoDownload(dlBtn, 'GIF export', 'amber');
+})();
+
+/* ============================= VIDEO: SPEED CONTROLLER ============================= */
+(() => {
+  const emptyEl = document.getElementById('speed-empty');
+  const input = document.getElementById('speed-input');
+  const workspace = document.getElementById('speed-workspace');
+  const video = document.getElementById('speed-video');
+  const range = document.getElementById('speed-range');
+  const current = document.getElementById('speed-current');
+
+  initDropzone(emptyEl, input, (file) => {
+    video.src = URL.createObjectURL(file);
+    emptyEl.classList.add('hidden');
+    workspace.classList.remove('hidden');
+  });
+
+  function setSpeed(v) {
+    video.playbackRate = parseFloat(v);
+    current.textContent = parseFloat(v).toFixed(2) + 'x';
+    range.value = v;
+  }
+  range.addEventListener('input', () => setSpeed(range.value));
+  document.querySelectorAll('.speed-preset').forEach(btn => btn.addEventListener('click', () => setSpeed(btn.dataset.speed)));
+})();
+
+/* ============================= PDF: TO WORD/IMAGE ============================= */
+(() => {
+  const emptyEl = document.getElementById('p2x-empty');
+  const input = document.getElementById('p2x-input');
+  const workspace = document.getElementById('p2x-workspace');
+  const nameEl = document.getElementById('p2x-name');
+  const sizeEl = document.getElementById('p2x-size');
+  const clearBtn = document.getElementById('p2x-clear');
+  const format = document.getElementById('p2x-format');
+  const runBtn = document.getElementById('p2x-run');
+  const progressWrap = document.getElementById('p2x-progress-wrap');
+  const result = document.getElementById('p2x-result');
+  const resultName = document.getElementById('p2x-result-name');
+  const downloadBtn = document.getElementById('p2x-download');
+
+  initDropzone(emptyEl, input, (file) => {
+    nameEl.textContent = file.name;
+    sizeEl.textContent = formatBytes(file.size);
+    emptyEl.classList.add('hidden');
+    workspace.classList.remove('hidden');
+    result.classList.add('hidden');
+  });
+
+  clearBtn.addEventListener('click', () => {
+    workspace.classList.add('hidden');
+    emptyEl.classList.remove('hidden');
+    input.value = '';
+  });
+
+  runBtn.addEventListener('click', () => {
+    result.classList.add('hidden');
+    simulateProgress(progressWrap, () => {
+      const base = (nameEl.textContent || 'document').replace(/\.pdf$/i, '');
+      resultName.textContent = `${base}.${format.value}`;
+      result.classList.remove('hidden');
+      showToast('Conversion complete', 'teal');
+    }, 1600);
+  });
+
+  demoDownload(downloadBtn, 'Converted file', 'teal');
+})();
+
+/* ============================= PDF: MERGE ============================= */
+(() => {
+  const drop = document.getElementById('merge-drop');
+  const input = document.getElementById('merge-input');
+  const list = document.getElementById('merge-list');
+  const footer = document.getElementById('merge-footer');
+  const totalEl = document.getElementById('merge-total');
+  const sizeEl = document.getElementById('merge-size');
+  const runBtn = document.getElementById('merge-run');
+  const progressWrap = document.getElementById('merge-progress-wrap');
+  const result = document.getElementById('merge-result');
+  const downloadBtn = document.getElementById('merge-download');
+  let files = [];
+
+  initDropzone(drop, input, (fileList) => {
+    files = files.concat(Array.from(fileList));
+    render();
+  });
+
+  function render() {
+    list.innerHTML = '';
+    files.forEach((f, i) => {
+      const li = document.createElement('li');
+      li.className = 'flex items-center gap-2.5 rounded-lg border border-brd bg-elev2 px-3 py-2';
+      li.innerHTML = `
+        <span class="font-mono text-[11px] text-faint w-5">${i + 1}</span>
+        <svg class="w-4 h-4 text-teal shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v5h5"/></svg>
+        <span class="text-sm truncate flex-1">${f.name}</span>
+        <span class="text-[11px] text-faint font-mono shrink-0">${formatBytes(f.size)}</span>
+        <button data-i="${i}" data-act="up" class="text-faint hover:text-ink text-xs px-1">↑</button>
+        <button data-i="${i}" data-act="down" class="text-faint hover:text-ink text-xs px-1">↓</button>
+        <button data-i="${i}" data-act="del" class="text-faint hover:text-danger text-xs px-1">✕</button>
+      `;
+      list.appendChild(li);
+    });
+    footer.classList.toggle('hidden', files.length === 0);
+    totalEl.textContent = files.length;
+    sizeEl.textContent = formatBytes(files.reduce((a, f) => a + f.size, 0));
+    result.classList.add('hidden');
+  }
+
+  list.addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    const i = parseInt(btn.dataset.i);
+    if (btn.dataset.act === 'up' && i > 0) [files[i - 1], files[i]] = [files[i], files[i - 1]];
+    if (btn.dataset.act === 'down' && i < files.length - 1) [files[i + 1], files[i]] = [files[i], files[i + 1]];
+    if (btn.dataset.act === 'del') files.splice(i, 1);
+    render();
+  });
+
+  runBtn.addEventListener('click', () => {
+    if (files.length < 2) { showToast('Add at least two PDFs to merge', 'danger'); return; }
+    simulateProgress(progressWrap, () => {
+      result.classList.remove('hidden');
+      showToast('PDFs merged successfully', 'teal');
+    }, 1700);
+  });
+
+  demoDownload(downloadBtn, 'Merged PDF', 'teal');
+})();
+
+/* ============================= PDF: COMPRESS ============================= */
+(() => {
+  const emptyEl = document.getElementById('comp-empty');
+  const input = document.getElementById('comp-input');
+  const workspace = document.getElementById('comp-workspace');
+  const nameEl = document.getElementById('comp-name');
+  const sizeEl = document.getElementById('comp-size');
+  const clearBtn = document.getElementById('comp-clear');
+  const level = document.getElementById('comp-level');
+  const runBtn = document.getElementById('comp-run');
+  const progressWrap = document.getElementById('comp-progress-wrap');
+  const result = document.getElementById('comp-result');
+  const originalSizeEl = document.getElementById('comp-original-size');
+  const newSizeEl = document.getElementById('comp-new-size');
+  const downloadBtn = document.getElementById('comp-download');
+  let currentFile = null;
+
+  initDropzone(emptyEl, input, (file) => {
+    currentFile = file;
+    nameEl.textContent = file.name;
+    sizeEl.textContent = formatBytes(file.size);
+    emptyEl.classList.add('hidden');
+    workspace.classList.remove('hidden');
+    result.classList.add('hidden');
+  });
+
+  clearBtn.addEventListener('click', () => {
+    workspace.classList.add('hidden');
+    emptyEl.classList.remove('hidden');
+    input.value = '';
+  });
+
+  runBtn.addEventListener('click', () => {
+    if (!currentFile) return;
+    result.classList.add('hidden');
+    simulateProgress(progressWrap, () => {
+      const reductions = { 1: 0.22, 2: 0.45, 3: 0.68 };
+      const reduction = reductions[level.value];
+      const newSize = currentFile.size * (1 - reduction);
+      originalSizeEl.textContent = formatBytes(currentFile.size);
+      newSizeEl.textContent = formatBytes(newSize);
+      result.classList.remove('hidden');
+      showToast(`Estimated ${Math.round(reduction * 100)}% smaller`, 'teal');
+    }, 1600);
+  });
+
+  demoDownload(downloadBtn, 'Compressed PDF', 'teal');
+})();
+
+/* ============================= PDF: PASSWORD PROTECT / UNLOCK ============================= */
+(() => {
+  // tabs
+  document.querySelectorAll('.pptab').forEach(tab => tab.addEventListener('click', () => {
+    document.querySelectorAll('.pptab').forEach(t => { t.classList.remove('active'); t.classList.add('text-dim'); });
+    tab.classList.add('active'); tab.classList.remove('text-dim');
+    document.getElementById('pp-protect').classList.toggle('hidden', tab.dataset.pptab !== 'protect');
+    document.getElementById('pp-protect').classList.toggle('flex', tab.dataset.pptab === 'protect');
+    document.getElementById('pp-unlock').classList.toggle('hidden', tab.dataset.pptab !== 'unlock');
+    document.getElementById('pp-unlock').classList.toggle('flex', tab.dataset.pptab === 'unlock');
+  }));
+
+  // Protect
+  const protDrop = document.getElementById('prot-drop');
+  const protInput = document.getElementById('prot-input');
+  const protDropText = document.getElementById('prot-drop-text');
+  const protFileNote = () => {};
+  initDropzone(protDrop, protInput, (file) => { protDropText.innerHTML = `<span class="text-teal font-medium">${file.name}</span> selected`; });
+
+  const passEl = document.getElementById('prot-pass');
+  const confirmEl = document.getElementById('prot-confirm');
+  const toggleBtn = document.getElementById('prot-toggle');
+  const strengthBar = document.getElementById('strength-bar');
+  const strengthLabel = document.getElementById('strength-label');
+
+  toggleBtn.addEventListener('click', () => {
+    const show = passEl.type === 'password';
+    passEl.type = show ? 'text' : 'password';
+    confirmEl.type = show ? 'text' : 'password';
+    toggleBtn.textContent = show ? 'Hide' : 'Show';
+  });
+
+  function scorePassword(pw) {
+    let score = 0;
+    if (pw.length >= 8) score++;
+    if (pw.length >= 12) score++;
+    if (/[A-Z]/.test(pw)) score++;
+    if (/[0-9]/.test(pw)) score++;
+    if (/[^A-Za-z0-9]/.test(pw)) score++;
+    return score;
+  }
+  passEl.addEventListener('input', () => {
+    const score = scorePassword(passEl.value);
+    const pct = passEl.value.length ? Math.min(100, (score / 5) * 100) : 0;
+    strengthBar.style.width = pct + '%';
+    const labels = ['Too short', 'Weak', 'Fair', 'Good', 'Strong', 'Very strong'];
+    strengthBar.className = 'h-full transition-all ' + (score <= 1 ? 'bg-danger' : score <= 3 ? 'bg-amber' : 'bg-teal');
+    strengthLabel.textContent = passEl.value ? labels[score] : 'Password strength';
+  });
+
+  const protRun = document.getElementById('prot-run');
+  const protProgress = document.getElementById('prot-progress-wrap');
+  const protResult = document.getElementById('prot-result');
+  protRun.addEventListener('click', () => {
+    if (!protInput.files.length) { showToast('Choose a PDF first', 'danger'); return; }
+    if (!passEl.value || passEl.value.length < 4) { showToast('Enter a password with at least 4 characters', 'danger'); return; }
+    if (passEl.value !== confirmEl.value) { showToast('Passwords do not match', 'danger'); return; }
+    protResult.classList.add('hidden');
+    simulateProgress(protProgress, () => {
+      protResult.classList.remove('hidden');
+      showToast('PDF protected with password', 'teal');
+    }, 1400);
+  });
+  demoDownload(document.getElementById('prot-download'), 'Protected PDF', 'teal');
+
+  // Unlock
+  const unlockDrop = document.getElementById('unlock-drop');
+  const unlockInput = document.getElementById('unlock-input');
+  const unlockDropText = document.getElementById('unlock-drop-text');
+  initDropzone(unlockDrop, unlockInput, (file) => { unlockDropText.innerHTML = `<span class="text-teal font-medium">${file.name}</span> selected`; });
+
+  const unlockRun = document.getElementById('unlock-run');
+  const unlockProgress = document.getElementById('unlock-progress-wrap');
+  const unlockResult = document.getElementById('unlock-result');
+  unlockRun.addEventListener('click', () => {
+    if (!unlockInput.files.length) { showToast('Choose a PDF first', 'danger'); return; }
+    if (!document.getElementById('unlock-pass').value) { showToast('Enter the current password', 'danger'); return; }
+    unlockResult.classList.add('hidden');
+    simulateProgress(unlockProgress, () => {
+      unlockResult.classList.remove('hidden');
+      showToast('PDF unlocked', 'teal');
+    }, 1400);
+  });
+  demoDownload(document.getElementById('unlock-download'), 'Unlocked PDF', 'teal');
+})();
+</script>
+</body>
+</html>
