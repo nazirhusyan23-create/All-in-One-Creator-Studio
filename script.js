@@ -1,4 +1,9 @@
 
+/* ============================= LIBRARY SETUP ============================= */
+if (window.pdfjsLib) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
 /* ============================= UTILITIES ============================= */
 function formatBytes(bytes) {
   if (!bytes) return '0 KB';
@@ -470,7 +475,7 @@ document.querySelectorAll('.nav-item, .mnav').forEach(btn => btn.addEventListene
   document.querySelectorAll('.speed-preset').forEach(btn => btn.addEventListener('click', () => setSpeed(btn.dataset.speed)));
 })();
 
-/* ============================= PDF: TO WORD/IMAGE ============================= */
+/* ============================= PDF: TO WORD / IMAGE / EXCEL (real conversion) ============================= */
 (() => {
   const emptyEl = document.getElementById('p2x-empty');
   const input = document.getElementById('p2x-input');
@@ -485,31 +490,157 @@ document.querySelectorAll('.nav-item, .mnav').forEach(btn => btn.addEventListene
   const resultName = document.getElementById('p2x-result-name');
   const downloadBtn = document.getElementById('p2x-download');
 
+  let currentFile = null;
+  let outputBlob = null;
+  let outputName = '';
+
   initDropzone(emptyEl, input, (file) => {
+    currentFile = file;
     nameEl.textContent = file.name;
     sizeEl.textContent = formatBytes(file.size);
     emptyEl.classList.add('hidden');
     workspace.classList.remove('hidden');
     result.classList.add('hidden');
+    outputBlob = null;
   });
 
   clearBtn.addEventListener('click', () => {
     workspace.classList.add('hidden');
     emptyEl.classList.remove('hidden');
     input.value = '';
+    currentFile = null;
+    outputBlob = null;
+    result.classList.add('hidden');
   });
 
-  runBtn.addEventListener('click', () => {
+  // Groups text items on a PDF page into visual lines using their baseline Y position.
+  function groupTextIntoLines(items) {
+    const lines = [];
+    let currentY = null;
+    let currentLine = [];
+    items.forEach((item) => {
+      const y = item.transform[5];
+      if (currentY !== null && Math.abs(y - currentY) > 2) {
+        const text = currentLine.join(' ').replace(/\s+/g, ' ').trim();
+        if (text) lines.push(text);
+        currentLine = [];
+      }
+      currentLine.push(item.str);
+      currentY = y;
+    });
+    const lastText = currentLine.join(' ').replace(/\s+/g, ' ').trim();
+    if (lastText) lines.push(lastText);
+    return lines;
+  }
+
+  async function readPdf(file) {
+    const buffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+    const pages = [];
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const textContent = await page.getTextContent();
+      pages.push({ page, lines: groupTextIntoLines(textContent.items) });
+    }
+    return pages;
+  }
+
+  function renderPageToBlob(page, mime) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const viewport = page.getViewport({ scale: 2 });
+        const canvas = document.createElement('canvas');
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        const ctx = canvas.getContext('2d');
+        await page.render({ canvasContext: ctx, viewport }).promise;
+        canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('canvas export failed'))), mime, 0.92);
+      } catch (err) { reject(err); }
+    });
+  }
+
+  async function buildDocx(pages, baseName) {
+    const { Document, Packer, Paragraph, TextRun, PageBreak } = docx;
+    const children = [];
+    pages.forEach((p, idx) => {
+      if (idx > 0) children.push(new Paragraph({ children: [new PageBreak()] }));
+      if (!p.lines.length) {
+        children.push(new Paragraph({ children: [new TextRun({ text: `(No selectable text found on page ${idx + 1} — it may be a scanned image.)`, italics: true })] }));
+      } else {
+        p.lines.forEach((line) => children.push(new Paragraph({ children: [new TextRun(line)] })));
+      }
+    });
+    const doc = new Document({ sections: [{ properties: {}, children }] });
+    const blob = await Packer.toBlob(doc);
+    return { blob, name: `${baseName}.docx` };
+  }
+
+  function buildXlsx(pages, baseName) {
+    const wb = XLSX.utils.book_new();
+    pages.forEach((p, idx) => {
+      const rows = p.lines.length ? p.lines.map((l) => [l]) : [['(no selectable text found)']];
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      XLSX.utils.book_append_sheet(wb, ws, `Page ${idx + 1}`.slice(0, 31));
+    });
+    const out = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    return { blob: new Blob([out], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), name: `${baseName}.xlsx` };
+  }
+
+  async function buildImages(pages, baseName, mime, ext) {
+    if (pages.length === 1) {
+      const blob = await renderPageToBlob(pages[0].page, mime);
+      return { blob, name: `${baseName}.${ext}` };
+    }
+    const zip = new JSZip();
+    for (let i = 0; i < pages.length; i++) {
+      const blob = await renderPageToBlob(pages[i].page, mime);
+      zip.file(`${baseName}-page-${i + 1}.${ext}`, blob);
+    }
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    return { blob: zipBlob, name: `${baseName}.zip` };
+  }
+
+  runBtn.addEventListener('click', async () => {
+    if (!currentFile) return;
+    if (!window.pdfjsLib) { showToast('PDF engine failed to load — check your internet connection', 'danger'); return; }
     result.classList.add('hidden');
-    simulateProgress(progressWrap, () => {
-      const base = (nameEl.textContent || 'document').replace(/\.pdf$/i, '');
-      resultName.textContent = `${base}.${format.value}`;
+    outputBlob = null;
+    runBtn.disabled = true;
+    progressWrap.classList.remove('hidden');
+    try {
+      const baseName = (currentFile.name || 'document').replace(/\.pdf$/i, '') || 'document';
+      const pages = await readPdf(currentFile);
+      let out;
+      if (format.value === 'docx') out = await buildDocx(pages, baseName);
+      else if (format.value === 'xlsx') out = buildXlsx(pages, baseName);
+      else if (format.value === 'jpg') out = await buildImages(pages, baseName, 'image/jpeg', 'jpg');
+      else out = await buildImages(pages, baseName, 'image/png', 'png');
+
+      outputBlob = out.blob;
+      outputName = out.name;
+      resultName.textContent = outputName;
       result.classList.remove('hidden');
       showToast('Conversion complete', 'teal');
-    }, 1600);
+    } catch (err) {
+      console.error(err);
+      showToast('Could not read this PDF — it may be encrypted, scanned, or corrupted.', 'danger');
+    } finally {
+      progressWrap.classList.add('hidden');
+      runBtn.disabled = false;
+    }
   });
 
-  demoDownload(downloadBtn, 'Converted file', 'teal');
+  downloadBtn.addEventListener('click', () => {
+    if (!outputBlob) return;
+    const url = URL.createObjectURL(outputBlob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = outputName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  });
 })();
 
 /* ============================= PDF: MERGE ============================= */
