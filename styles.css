@@ -1,0 +1,112 @@
+/* ============================================================
+   All-in-One Creator Studio — custom stylesheet
+   (extracted from inline <style>, plus bug fixes noted inline)
+   ============================================================ */
+
+* { scrollbar-width: thin; scrollbar-color: #2b3140 transparent; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #2b3140; border-radius: 8px; }
+html { scroll-behavior: smooth; }
+body { background-color: #0B0D12; }
+
+.bg-noise {
+  background-image: radial-gradient(circle at 15% 10%, rgba(139,124,246,0.09), transparent 40%),
+                     radial-gradient(circle at 85% 0%, rgba(245,165,36,0.07), transparent 35%),
+                     radial-gradient(circle at 50% 100%, rgba(45,212,191,0.06), transparent 40%);
+}
+
+.checker {
+  background-image: linear-gradient(45deg, #23293399 25%, transparent 25%),
+    linear-gradient(-45deg, #23293399 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #23293399 75%),
+    linear-gradient(-45deg, transparent 75%, #23293399 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+  background-color: #0f1319;
+}
+
+.rail-dot { box-shadow: 0 0 0 3px rgba(0,0,0,0); transition: box-shadow .2s ease; }
+.nav-item.active .rail-dot { box-shadow: 0 0 0 3px currentColor inset; }
+
+@keyframes scan {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+.scan-bar::after {
+  content: '';
+  position: absolute; inset: 0;
+  width: 30%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
+  animation: scan 1.1s linear infinite;
+}
+
+@keyframes fadein { from { opacity: 0; transform: translateY(6px);} to { opacity: 1; transform: translateY(0);} }
+.fade-in { animation: fadein .35s ease both; }
+
+input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  height: 4px; border-radius: 999px; background: #232833; outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #E8EAF0; border: 3px solid #12151C;
+  cursor: pointer; margin-top: -6px;
+  box-shadow: 0 0 0 1px #2b3140;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #E8EAF0; border: 3px solid #12151C; cursor: pointer;
+}
+input[type="range"].accent-violet::-webkit-slider-thumb { background:#8B7CF6; }
+input[type="range"].accent-amber::-webkit-slider-thumb { background:#F5A524; }
+input[type="range"].accent-teal::-webkit-slider-thumb { background:#2DD4BF; }
+
+.toast { transition: all .35s cubic-bezier(.2,.9,.3,1.2); }
+
+.crop-handle { touch-action: none; }
+.dropzone.dragover { border-color: currentColor; background: rgba(255,255,255,0.03); }
+
+.tab-underline { position: relative; }
+.tab-underline::after {
+  content:''; position:absolute; left:0; right:0; bottom:-1px; height:2px;
+  background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .25s ease;
+}
+.tab-underline.active::after { transform: scaleX(1); }
+
+.panel { display: none; }
+.panel.active { display: block; }
+
+::selection { background: #8B7CF6; color: #0B0D12; }
+
+/* ------------------------------------------------------------
+   BUG FIX #1 — dual-handle trim slider was unusable.
+   The two overlapping <input type="range"> elements both had
+   `pointer-events-none` on the WHOLE control, which also blocks
+   their thumbs, so neither slider could be dragged at all.
+   Fix: keep the track/element non-interactive so it doesn't
+   swallow clicks meant for the other handle, but re-enable
+   pointer events specifically on each thumb so it stays
+   draggable.
+------------------------------------------------------------- */
+input[type="range"].range-dual {
+  pointer-events: none;
+}
+input[type="range"].range-dual::-webkit-slider-thumb {
+  pointer-events: auto;
+}
+input[type="range"].range-dual::-moz-range-thumb {
+  pointer-events: auto;
+}
+
+/* ------------------------------------------------------------
+   BUG FIX #2 — mobile category tabs (Photo/Video/PDF).
+   The old markup toggled a Tailwind `text-dim` class on top of
+   a fixed `text-violet` / `text-amber` / `text-teal` class on
+   the very same element. Two Tailwind color utilities fighting
+   over the same `color` property produce inconsistent results
+   depending on generated CSS order, so inactive tabs sometimes
+   didn't dim. Fix: dim inactive tabs with opacity instead, which
+   never conflicts with the category color.
+------------------------------------------------------------- */
+.mnav.is-dim { opacity: .55; }
