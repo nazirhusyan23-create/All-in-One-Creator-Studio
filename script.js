@@ -514,6 +514,14 @@ document.querySelectorAll('.nav-item, .mnav').forEach(btn => btn.addEventListene
   });
 
   // Groups text items on a PDF page into visual lines using their baseline Y position.
+  // PDF text extraction can include stray control characters (NUL, vertical
+  // tab, etc.) that are illegal inside XML 1.0. Word/Excel reject the whole
+  // file if even one of these slips into the generated document, so every
+  // extracted string is cleaned before it's used anywhere downstream.
+  function sanitizeText(str) {
+    return str.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+  }
+
   function groupTextIntoLines(items) {
     const lines = [];
     let currentY = null;
@@ -521,14 +529,14 @@ document.querySelectorAll('.nav-item, .mnav').forEach(btn => btn.addEventListene
     items.forEach((item) => {
       const y = item.transform[5];
       if (currentY !== null && Math.abs(y - currentY) > 2) {
-        const text = currentLine.join(' ').replace(/\s+/g, ' ').trim();
+        const text = sanitizeText(currentLine.join(' ')).replace(/\s+/g, ' ').trim();
         if (text) lines.push(text);
         currentLine = [];
       }
       currentLine.push(item.str);
       currentY = y;
     });
-    const lastText = currentLine.join(' ').replace(/\s+/g, ' ').trim();
+    const lastText = sanitizeText(currentLine.join(' ')).replace(/\s+/g, ' ').trim();
     if (lastText) lines.push(lastText);
     return lines;
   }
