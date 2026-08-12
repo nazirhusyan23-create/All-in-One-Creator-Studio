@@ -35,12 +35,19 @@
     },
   }
 </script>
-<link rel="stylesheet" href="styles.css">
+<style>
+  .panel { display: none; }
+  .panel.active { display: flex; }
+  .nav-item { opacity: 0.7; }
+  .nav-item.active { opacity: 1; background: #171B24; color: #E8EAF0; }
+  .mnav { opacity: 0.7; border-bottom: 2px solid transparent; }
+  .mnav.active { opacity: 1; border-bottom-color: currentColor; }
+</style>
 
 <!-- Google AdSense Verification Script -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2006445566626425" crossorigin="anonymous"></script>
 </head>
-<body class="bg-base text-ink font-sans antialiased bg-noise min-h-screen">
+<body class="bg-base text-ink font-sans antialiased min-h-screen">
 
 <!-- ================= TOASTS ================= -->
 <div id="toast-container" class="fixed bottom-4 right-4 left-4 sm:left-auto z-[100] flex flex-col gap-2 items-end pointer-events-none"></div>
@@ -60,24 +67,24 @@
     </div>
 
     <nav class="flex flex-col gap-1" id="sidebar-nav">
-      <button data-cat="home" class="nav-item active group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors" style="--accent:#F43F5E;">
-        <span class="rail-dot w-2 h-2 rounded-full shrink-0" style="background:#F43F5E;color:#F43F5E;"></span>
+      <button data-cat="home" class="nav-item active group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors">
+        <span class="w-2 h-2 rounded-full shrink-0 bg-rose-500"></span>
         <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
         Home
       </button>
-      <button data-cat="photo" class="nav-item group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors" style="--accent:#8B7CF6;">
-        <span class="rail-dot w-2 h-2 rounded-full shrink-0" style="background:#8B7CF6;color:#8B7CF6;"></span>
+      <button data-cat="photo" class="nav-item group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors">
+        <span class="w-2 h-2 rounded-full shrink-0 bg-violet"></span>
         <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-4 4-3-3-6 6"/></svg>
         Photo Tools
       </button>
-      <button data-cat="video" class="nav-item group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors" style="--accent:#F5A524;">
-        <span class="rail-dot w-2 h-2 rounded-full shrink-0" style="background:#F5A524;color:#F5A524;"></span>
+      <button data-cat="video" class="nav-item group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors">
+        <span class="w-2 h-2 rounded-full shrink-0 bg-amber"></span>
         <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="15" height="14" rx="2"/><path d="M17 9l5-3v12l-5-3"/></svg>
         Video Tools
       </button>
-      <button data-cat="pdf" class="nav-item group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors" style="--accent:#2DD4BF;">
-        <span class="rail-dot w-2 h-2 rounded-full shrink-0" style="background:#2DD4BF;color:#2DD4BF;"></span>
-        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v5h5"/><path d="M8.5 15.5h1a1.5 1.5 0 0 0 0-3h-1v5"/><path d="M13 12.5v5h1a2 2 0 0 0 0-5h-1z" opacity="0"/></svg>
+      <button data-cat="pdf" class="nav-item group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors">
+        <span class="w-2 h-2 rounded-full shrink-0 bg-teal"></span>
+        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v5h5"/><path d="M8.5 15.5h1a1.5 1.5 0 0 0 0-3h-1v5"/></svg>
         PDF Tools
       </button>
     </nav>
@@ -122,11 +129,11 @@
 
     <!-- Mobile category tabs -->
     <div class="lg:hidden px-4 sm:px-8 -mt-1 mb-2">
-      <div class="max-w-6xl mx-auto flex gap-1 border-b border-brd overflow-x-auto">
-        <button data-cat="home" class="mnav active tab-underline px-3 py-2.5 text-sm font-medium whitespace-nowrap" style="color:#F43F5E;">Home</button>
-        <button data-cat="photo" class="mnav tab-underline text-violet px-3 py-2.5 text-sm font-medium whitespace-nowrap is-dim">Photo Tools</button>
-        <button data-cat="video" class="mnav tab-underline text-amber px-3 py-2.5 text-sm font-medium whitespace-nowrap is-dim">Video Tools</button>
-        <button data-cat="pdf" class="mnav tab-underline text-teal px-3 py-2.5 text-sm font-medium whitespace-nowrap is-dim">PDF Tools</button>
+      <div class="max-w-6xl mx-auto flex gap-1 border-b border-brd overflow-x-auto" id="mobile-nav">
+        <button data-cat="home" class="mnav active text-rose-500 px-3 py-2.5 text-sm font-medium whitespace-nowrap">Home</button>
+        <button data-cat="photo" class="mnav text-violet px-3 py-2.5 text-sm font-medium whitespace-nowrap">Photo Tools</button>
+        <button data-cat="video" class="mnav text-amber px-3 py-2.5 text-sm font-medium whitespace-nowrap">Video Tools</button>
+        <button data-cat="pdf" class="mnav text-teal px-3 py-2.5 text-sm font-medium whitespace-nowrap">PDF Tools</button>
       </div>
     </div>
 
@@ -149,12 +156,11 @@
         <main class="min-w-0 flex flex-col gap-5">
 
           <!-- ============ HOME PANEL ============ -->
-          <section id="panel-home" class="panel active fade-in flex flex-col gap-5">
-
+          <section id="panel-home" class="panel active flex-col gap-5">
             <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
-              <div class="h-1" style="background:#F43F5E;"></div>
+              <div class="h-1 bg-rose-500"></div>
               <div class="p-5 sm:p-7">
-                <p class="font-mono text-[11px] tracking-widest uppercase mb-2" style="color:#F43F5E;">Live Wire Stream</p>
+                <p class="font-mono text-[11px] tracking-widest uppercase mb-2 text-rose-500">Live Wire Stream</p>
                 <h2 class="font-display font-semibold text-xl sm:text-2xl mb-2">Breaking News &amp; Creator Calculators</h2>
                 <p class="text-dim text-sm max-w-2xl leading-relaxed">Welcome to Dateline Live Wire. Explore live news updates, project breakdowns, and ten free financial and content calculators designed to model your digital publishing and creator revenue streams securely in your browser.</p>
               </div>
@@ -167,9 +173,7 @@
           </section>
 
           <!-- ============ PHOTO PANEL ============ -->
-          <section id="panel-photo" class="panel fade-in flex flex-col gap-5">
-
-            <!-- Background Remover (mockup) -->
+          <section id="panel-photo" class="panel flex-col gap-5">
             <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
               <div class="h-1 bg-violet"></div>
               <div class="p-5 sm:p-6">
@@ -180,139 +184,12 @@
                   </div>
                   <span class="shrink-0 text-[10px] font-mono uppercase tracking-wide px-2 py-1 rounded-full bg-elev3 text-faint">Preview demo</span>
                 </div>
-
                 <div class="grid sm:grid-cols-2 gap-4">
-                  <div>
-                    <div id="bgr-drop" class="dropzone relative rounded-xl border-2 border-dashed border-brd text-violet aspect-video flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-elev2 transition-colors overflow-hidden">
-                      <input id="bgr-input" type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
-                      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
-                      <p class="text-xs text-dim px-4 text-center">Drop an image or <span class="text-violet font-medium">browse</span></p>
-                      <canvas id="bgr-canvas-in" class="hidden absolute inset-0 w-full h-full object-contain"></canvas>
-                    </div>
-                    <button id="bgr-run" disabled class="mt-3 w-full py-2.5 rounded-lg bg-violet text-[#0B0D12] text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-110 transition">Remove Background</button>
+                  <div class="dropzone relative rounded-xl border-2 border-dashed border-brd text-violet aspect-video flex flex-col items-center justify-center gap-2">
+                    <p class="text-xs text-dim">Upload an image to test background removal</p>
                   </div>
-
-                  <div>
-                    <div class="checker rounded-xl aspect-video flex items-center justify-center relative overflow-hidden border border-brd">
-                      <canvas id="bgr-canvas-out" class="hidden w-full h-full object-contain"></canvas>
-                      <p id="bgr-placeholder" class="text-faint text-xs font-mono">Result preview</p>
-                      <div id="bgr-progress" class="hidden absolute inset-x-3 bottom-3 h-1.5 rounded-full bg-elev3 overflow-hidden">
-                        <div class="scan-bar relative h-full w-full bg-violet/30"></div>
-                      </div>
-                    </div>
-                    <button id="bgr-download" disabled class="mt-3 w-full py-2.5 rounded-lg border border-brd text-sm font-semibold text-dim disabled:opacity-40 hover:text-ink hover:border-violet/50 transition">Download PNG</button>
-                  </div>
-                </div>
-                <p class="text-[11px] text-faint mt-3">Demo preview — approximates a cutout using an edge mask so you can try the workflow.</p>
-              </div>
-            </div>
-
-            <!-- Resizer & Cropper -->
-            <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
-              <div class="h-1 bg-violet"></div>
-              <div class="p-5 sm:p-6">
-                <div class="mb-4">
-                  <h2 class="font-display font-semibold text-lg">Image Resizer &amp; Cropper</h2>
-                  <p class="text-dim text-sm mt-0.5">Drag to crop, set exact output dimensions, export instantly.</p>
-                </div>
-
-                <div id="crop-empty" class="dropzone relative rounded-xl border-2 border-dashed border-brd text-violet aspect-video flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-elev2 transition-colors">
-                  <input id="crop-input" type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
-                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2v14a2 2 0 002 2h14"/><path d="M18 22V8a2 2 0 00-2-2H2"/></svg>
-                  <p class="text-xs text-dim px-4 text-center">Drop an image or <span class="text-violet font-medium">browse</span> to start cropping</p>
-                </div>
-
-                <div id="crop-workspace" class="hidden">
-                  <div class="grid lg:grid-cols-[1fr_220px] gap-4">
-                    <div id="crop-stage" class="relative w-full rounded-xl overflow-hidden bg-elev2 border border-brd select-none" style="touch-action:none;">
-                      <img id="crop-img" class="w-full h-full block pointer-events-none select-none" draggable="false">
-                      <div id="crop-box" class="crop-handle absolute border-2 border-violet cursor-move" style="box-shadow:0 0 0 9999px rgba(0,0,0,.55);">
-                        <div id="crop-resize" class="crop-handle absolute -right-1.5 -bottom-1.5 w-4 h-4 rounded-sm bg-violet cursor-se-resize"></div>
-                      </div>
-                    </div>
-
-                    <div class="flex flex-col gap-3">
-                      <div>
-                        <label class="text-[11px] font-mono text-faint uppercase">Aspect</label>
-                        <div class="grid grid-cols-4 gap-1.5 mt-1.5">
-                          <button data-ratio="0" class="ratio-btn py-1.5 rounded-md bg-elev3 border border-brd text-[11px] hover:border-violet/50">Free</button>
-                          <button data-ratio="1" class="ratio-btn py-1.5 rounded-md bg-elev3 border border-brd text-[11px] hover:border-violet/50">1:1</button>
-                          <button data-ratio="1.3333" class="ratio-btn py-1.5 rounded-md bg-elev3 border border-brd text-[11px] hover:border-violet/50">4:3</button>
-                          <button data-ratio="1.7778" class="ratio-btn py-1.5 rounded-md bg-elev3 border border-brd text-[11px] hover:border-violet/50">16:9</button>
-                        </div>
-                      </div>
-                      <div class="grid grid-cols-2 gap-2">
-                        <div>
-                          <label class="text-[11px] font-mono text-faint uppercase">Width</label>
-                          <input id="crop-w" type="number" min="1" class="w-full mt-1 bg-elev3 border border-brd rounded-md px-2 py-1.5 text-sm font-mono focus:outline-none focus:border-violet">
-                        </div>
-                        <div>
-                          <label class="text-[11px] font-mono text-faint uppercase">Height</label>
-                          <input id="crop-h" type="number" min="1" class="w-full mt-1 bg-elev3 border border-brd rounded-md px-2 py-1.5 text-sm font-mono focus:outline-none focus:border-violet">
-                        </div>
-                      </div>
-                      <label class="flex items-center gap-2 text-xs text-dim">
-                        <input id="crop-lock" type="checkbox" checked class="accent-violet w-3.5 h-3.5"> Lock aspect ratio
-                      </label>
-                      <button id="crop-apply" class="mt-1 w-full py-2.5 rounded-lg bg-violet text-[#0B0D12] text-sm font-semibold hover:brightness-110 transition">Apply Crop &amp; Resize</button>
-                      <button id="crop-reset" class="w-full py-2 rounded-lg border border-brd text-xs text-dim hover:text-ink transition">Upload another image</button>
-                    </div>
-                  </div>
-
-                  <div id="crop-result" class="hidden mt-4 rounded-xl border border-brd bg-elev2 p-4">
-                    <div class="flex items-center justify-between mb-3">
-                      <p class="text-sm font-medium">Result</p>
-                      <span id="crop-result-dims" class="text-[11px] font-mono text-faint"></span>
-                    </div>
-                    <div class="checker rounded-lg overflow-hidden border border-brd max-h-64 flex items-center justify-center">
-                      <canvas id="crop-canvas" class="max-w-full max-h-64"></canvas>
-                    </div>
-                    <a id="crop-download" download="cropped-image.png" class="mt-3 inline-flex w-full justify-center py-2.5 rounded-lg bg-elev3 border border-brd text-sm font-semibold hover:border-violet/50 transition">Download PNG</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Filter & Brightness Adjuster -->
-            <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
-              <div class="h-1 bg-violet"></div>
-              <div class="p-5 sm:p-6">
-                <div class="mb-4">
-                  <h2 class="font-display font-semibold text-lg">Filter &amp; Brightness Adjuster</h2>
-                  <p class="text-dim text-sm mt-0.5">Live canvas filters — brightness, contrast, saturation and blur.</p>
-                </div>
-
-                <div id="filt-empty" class="dropzone relative rounded-xl border-2 border-dashed border-brd text-violet aspect-video flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-elev2 transition-colors">
-                  <input id="filt-input" type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
-                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-                  <p class="text-xs text-dim px-4 text-center">Drop an image or <span class="text-violet font-medium">browse</span></p>
-                </div>
-
-                <div id="filt-workspace" class="hidden grid lg:grid-cols-[1fr_240px] gap-4">
-                  <div class="rounded-xl overflow-hidden border border-brd bg-elev2 flex items-center justify-center">
-                    <canvas id="filt-canvas" class="max-w-full max-h-[420px]"></canvas>
-                  </div>
-                  <div class="flex flex-col gap-4">
-                    <div>
-                      <div class="flex justify-between text-[11px] font-mono text-faint uppercase mb-1"><span>Brightness</span><span id="filt-brightness-v">100%</span></div>
-                      <input id="filt-brightness" type="range" min="0" max="200" value="100" class="w-full accent-violet">
-                    </div>
-                    <div>
-                      <div class="flex justify-between text-[11px] font-mono text-faint uppercase mb-1"><span>Contrast</span><span id="filt-contrast-v">100%</span></div>
-                      <input id="filt-contrast" type="range" min="0" max="200" value="100" class="w-full accent-violet">
-                    </div>
-                    <div>
-                      <div class="flex justify-between text-[11px] font-mono text-faint uppercase mb-1"><span>Saturation</span><span id="filt-saturate-v">100%</span></div>
-                      <input id="filt-saturate" type="range" min="0" max="200" value="100" class="w-full accent-violet">
-                    </div>
-                    <div>
-                      <div class="flex justify-between text-[11px] font-mono text-faint uppercase mb-1"><span>Blur</span><span id="filt-blur-v">0px</span></div>
-                      <input id="filt-blur" type="range" min="0" max="10" value="0" class="w-full accent-violet">
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 mt-1">
-                      <button id="filt-reset" class="py-2 rounded-lg border border-brd text-xs text-dim hover:text-ink transition">Reset</button>
-                      <a id="filt-download" download="filtered-image.png" class="py-2 rounded-lg bg-violet text-[#0B0D12] text-xs font-semibold text-center hover:brightness-110 transition">Download</a>
-                    </div>
+                  <div class="rounded-xl aspect-video flex items-center justify-center border border-brd bg-elev2">
+                    <p class="text-faint text-xs font-mono">Result preview</p>
                   </div>
                 </div>
               </div>
@@ -320,173 +197,97 @@
           </section>
 
           <!-- ============ VIDEO PANEL ============ -->
-          <section id="panel-video" class="panel fade-in flex flex-col gap-5">
-
-            <!-- Trim & Cut -->
+          <section id="panel-video" class="panel flex-col gap-5">
             <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
               <div class="h-1 bg-amber"></div>
               <div class="p-5 sm:p-6">
-                <div class="mb-4">
-                  <h2 class="font-display font-semibold text-lg">Video Trim &amp; Cut</h2>
-                  <p class="text-dim text-sm mt-0.5">Pick in/out points and preview the selected range instantly.</p>
-                </div>
-
-                <div id="trim-empty" class="dropzone relative rounded-xl border-2 border-dashed border-brd text-amber aspect-video flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-elev2 transition-colors">
-                  <input id="trim-input" type="file" accept="video/*" class="absolute inset-0 opacity-0 cursor-pointer">
-                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="15" height="14" rx="2"/><path d="M17 9l5-3v12l-5-3"/></svg>
-                  <p class="text-xs text-dim px-4 text-center">Drop a video or <span class="text-amber font-medium">browse</span></p>
-                </div>
-
-                <div id="trim-workspace" class="hidden">
-                  <video id="trim-video" class="w-full rounded-xl border border-brd bg-black max-h-[380px]" controls></video>
-
-                  <div class="mt-4">
-                    <div class="relative h-8 flex items-center">
-                      <div class="absolute inset-x-0 h-1.5 rounded-full bg-elev3"></div>
-                      <div id="trim-range-fill" class="absolute h-1.5 rounded-full bg-amber"></div>
-                      <input id="trim-start" type="range" min="0" max="100" value="0" class="absolute w-full accent-amber range-dual">
-                      <input id="trim-end" type="range" min="0" max="100" value="100" class="absolute w-full accent-amber range-dual">
-                    </div>
-                    <div class="flex justify-between text-[11px] font-mono text-faint mt-1">
-                      <span id="trim-start-label">0:00</span>
-                      <span id="trim-duration-label" class="text-dim">selected: 0:00</span>
-                      <span id="trim-end-label">0:00</span>
-                    </div>
-                  </div>
-
-                  <div class="flex flex-wrap gap-2 mt-4">
-                    <button id="trim-set-start" class="px-3 py-2 rounded-lg border border-brd text-xs hover:border-amber/50 transition">Set start at playhead</button>
-                    <button id="trim-set-end" class="px-3 py-2 rounded-lg border border-brd text-xs hover:border-amber/50 transition">Set end at playhead</button>
-                    <button id="trim-preview" class="px-3 py-2 rounded-lg border border-brd text-xs hover:border-amber/50 transition">Preview selection</button>
-                    <button id="trim-export" class="ml-auto px-4 py-2 rounded-lg bg-amber text-[#0B0D12] text-xs font-semibold hover:brightness-110 transition">Export Trimmed Clip</button>
-                  </div>
-                  <div id="trim-progress-wrap" class="hidden mt-3 h-1.5 rounded-full bg-elev3 overflow-hidden relative">
-                    <div class="scan-bar relative h-full w-full bg-amber/30"></div>
-                  </div>
+                <h2 class="font-display font-semibold text-lg">Video Trim &amp; Cut</h2>
+                <p class="text-dim text-sm mt-0.5 mb-4">Pick in/out points and preview selected range.</p>
+                <div class="dropzone relative rounded-xl border-2 border-dashed border-brd text-amber aspect-video flex flex-col items-center justify-center gap-2">
+                  <p class="text-xs text-dim">Upload a video to start trimming</p>
                 </div>
               </div>
             </div>
+          </section>
 
-            <!-- Video to GIF -->
+          <!-- ============ PDF PANEL ============ -->
+          <section id="panel-pdf" class="panel flex-col gap-5">
             <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
-              <div class="h-1 bg-amber"></div>
+              <div class="h-1 bg-teal"></div>
               <div class="p-5 sm:p-6">
-                <div class="mb-4">
-                  <h2 class="font-display font-semibold text-lg">Video to GIF Converter</h2>
-                  <p class="text-dim text-sm mt-0.5">Turn a clip into a lightweight, shareable GIF.</p>
-                </div>
-
-                <div class="grid sm:grid-cols-2 gap-4">
-                  <div>
-                    <div id="gif-empty" class="dropzone relative rounded-xl border-2 border-dashed border-brd text-amber aspect-video flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-elev2 transition-colors overflow-hidden">
-                      <input id="gif-input" type="file" accept="video/*" class="absolute inset-0 opacity-0 cursor-pointer">
-                      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-                      <p class="text-xs text-dim px-4 text-center">Drop a video or <span class="text-amber font-medium">browse</span></p>
-                      <video id="gif-video" class="hidden absolute inset-0 w-full h-full object-cover"></video>
-                    </div>
-
-                    <div class="mt-3 grid grid-cols-2 gap-3">
-                      <div>
-                        <div class="flex justify-between text-[11px] font-mono text-faint uppercase mb-1"><span>FPS</span><span id="gif-fps-v">10</span></div>
-                        <input id="gif-fps" type="range" min="5" max="24" value="10" class="w-full accent-amber">
-                      </div>
-                      <div>
-                        <div class="flex justify-between text-[11px] font-mono text-faint uppercase mb-1"><span>Quality</span><span id="gif-quality-v">Medium</span></div>
-                        <input id="gif-quality" type="range" min="1" max="3" value="2" class="w-full accent-amber">
-                      </div>
-                    </div>
-                    <button id="gif-run" disabled class="mt-3 w-full py-2.5 rounded-lg bg-amber text-[#0B0D12] text-sm font-semibold disabled:opacity-40 hover:brightness-110 transition">Convert to GIF</button>
-                </div>
-
-                <div>
-                  <div class="checker rounded-xl aspect-video flex items-center justify-center relative overflow-hidden border border-brd">
-                    <canvas id="gif-thumb" class="hidden w-full h-full object-cover"></canvas>
-                    <p id="gif-placeholder" class="text-faint text-xs font-mono">GIF preview</p>
-                    <div id="gif-progress" class="hidden absolute inset-x-3 bottom-3 h-1.5 rounded-full bg-elev3 overflow-hidden">
-                      <div class="scan-bar relative h-full w-full bg-amber/30"></div>
-                    </div>
-                    <span id="gif-badge" class="hidden absolute top-2 left-2 text-[10px] font-mono bg-elev3/90 border border-brd rounded-full px-2 py-0.5">GIF · demo</span>
-                  </div>
-                  <button id="gif-download" disabled class="mt-3 w-full py-2.5 rounded-lg border border-brd text-sm font-semibold text-dim disabled:opacity-40 hover:text-ink hover:border-amber/50 transition">Download GIF</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Speed Controller -->
-          <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
-            <div class="h-1 bg-amber"></div>
-            <div class="p-5 sm:p-6">
-              <div class="mb-4">
-                <h2 class="font-display font-semibold text-lg">Speed Controller</h2>
-                <p class="text-dim text-sm mt-0.5">Play back a clip slow-motion or sped up in real time.</p>
-              </div>
-
-              <div id="speed-empty" class="dropzone relative rounded-xl border-2 border-dashed border-brd text-amber aspect-video flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-elev2 transition-colors">
-                <input id="speed-input" type="file" accept="video/*" class="absolute inset-0 opacity-0 cursor-pointer">
-                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-                <p class="text-xs text-dim px-4 text-center">Drop a video or <span class="text-amber font-medium">browse</span></p>
-              </div>
-
-              <div id="speed-workspace" class="hidden">
-                <video id="speed-video" class="w-full rounded-xl border border-brd bg-black max-h-[360px]" controls loop></video>
-                <div class="mt-4 flex items-center gap-4">
-                  <span class="text-[11px] font-mono text-faint">0.25x</span>
-                  <input id="speed-range" type="range" min="0.25" max="2" step="0.05" value="1" class="flex-1 accent-amber">
-                  <span class="text-[11px] font-mono text-faint">2x</span>
-              </div>
-              <div class="flex items-center justify-between mt-2">
-                <div class="flex gap-1.5">
-                  <button data-speed="0.5" class="speed-preset px-2.5 py-1 rounded-md bg-elev3 border border-brd text-[11px] hover:border-amber/50">0.5x</button>
-                  <button data-speed="1" class="speed-preset px-2.5 py-1 rounded-md bg-elev3 border border-brd text-[11px] hover:border-amber/50">1x</button>
-                  <button data-speed="1.5" class="speed-preset px-2.5 py-1 rounded-md bg-elev3 border border-brd text-[11px] hover:border-amber/50">1.5x</button>
-                  <button data-speed="2" class="speed-preset px-2.5 py-1 rounded-md bg-elev3 border border-brd text-[11px] hover:border-amber/50">2x</button>
-                </div>
-                <span id="speed-current" class="font-mono text-sm text-amber font-medium">1.00x</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- ============ PDF PANEL ============ -->
-        <section id="panel-pdf" class="panel fade-in flex flex-col gap-5">
-
-          <!-- PDF to Word/Image -->
-          <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
-            <div class="h-1 bg-teal"></div>
-            <div class="p-5 sm:p-6">
-              <div class="mb-4">
                 <h2 class="font-display font-semibold text-lg">PDF to Word / Image Converter</h2>
-                <p class="text-dim text-sm mt-0.5">Convert a PDF into an editable or shareable format.</p>
-              </div>
-
-              <div id="p2x-empty" class="dropzone relative rounded-xl border-2 border-dashed border-brd text-teal py-10 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-elev2 transition-colors">
-                <input id="p2x-input" type="file" accept="application/pdf" class="absolute inset-0 opacity-0 cursor-pointer">
-                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v5h5"/></svg>
-                <p class="text-xs text-dim px-4 text-center">Drop a PDF or <span class="text-teal font-medium">browse</span></p>
-              </div>
-
-              <div id="p2x-workspace" class="hidden">
-                <div class="flex items-center gap-3 rounded-lg border border-brd bg-elev2 px-3 py-2.5">
-                  <svg class="w-5 h-5 text-teal shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v5h5"/></svg>
-                  <div class="min-w-0 flex-1">
-                    <p id="p2x-name" class="text-sm truncate"></p>
-                    <p id="p2x-size" class="text-[11px] text-faint font-mono"></p>
-                  </div>
-                  <button id="p2x-clear" class="text-faint hover:text-danger text-xs shrink-0">Remove</button>
-                </div>
-
-                <div class="flex flex-wrap items-center gap-3 mt-4">
-                  <label class="text-xs text-dim">Convert</label>
+                <p class="text-dim text-sm mt-0.5 mb-4">Convert PDF documents securely.</p>
+                <div class="dropzone relative rounded-xl border-2 border-dashed border-brd text-teal py-10 flex flex-col items-center justify-center gap-2">
+                  <p class="text-xs text-dim">Drop a PDF file here</p>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-      </main>
+          </section>
+
+        </main>
+      </div>
     </div>
   </div>
 </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const navItems = document.querySelectorAll('#sidebar-nav button, #mobile-nav button');
+  const panels = document.querySelectorAll('.panel');
+
+  function switchTab(cat) {
+    navItems.forEach(btn => {
+      if (btn.dataset.cat === cat) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    panels.forEach(panel => {
+      if (panel.id === 'panel-' + cat) {
+        panel.classList.add('active');
+      } else {
+        panel.classList.remove('active');
+      }
+    });
+  }
+
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const cat = item.dataset.cat;
+      if (cat) switchTab(cat);
+    });
+  });
+
+  // Calculators Grid
+  const calcGrid = document.getElementById('calc-grid');
+  if (calcGrid) {
+    const calculators = [
+      { title: 'Google AdSense Revenue Estimator', desc: 'Estimate monthly earnings based on page views and CTR.' },
+      { title: 'Ezoic Earnings Calculator', desc: 'Project uplift from advanced ad layout optimization.' },
+      { title: 'Media.net Contextual Yield', desc: 'Calculate potential revenue from targeted contextual ads.' },
+      { title: 'AdMob Mobile App Revenue', desc: 'Model in-app banner, interstitial, and rewarded ad income.' },
+      { title: 'Amazon Appstore Royalties', desc: 'Estimate developer payouts for digital app distributions.' },
+      { title: 'Payoneer Fee & Conversion Calculator', desc: 'Calculate net funds after international transfer fees.' },
+      { title: 'Content Traffic Growth Model', desc: 'Project organic traffic scaling over 12 months.' },
+      { title: 'Vercel Bandwidth Cost Estimator', desc: 'Monitor static hosting and serverless function limits.' },
+      { title: 'App Monetization ROI Calculator', desc: 'Evaluate development cost vs. ad network returns.' },
+      { title: 'Author / Researcher Citation Impact', desc: 'Track academic publication metrics and visibility.' }
+    ];
+
+    calcGrid.innerHTML = calculators.map((calc, i) => `
+      <div class="rounded-xl border border-brd bg-elev2 p-4 flex flex-col justify-between hover:border-violet/40 transition">
+        <div>
+          <span class="text-[10px] font-mono text-faint uppercase">Calculator 0${i+1}</span>
+          <h4 class="font-display font-semibold text-sm text-ink mt-1">${calc.title}</h4>
+          <p class="text-xs text-dim mt-1 leading-relaxed">${calc.desc}</p>
+        </div>
+        <button onclick="alert('Calculator 0${i+1} initialized.')" class="mt-4 py-1.5 px-3 rounded-lg bg-elev3 border border-brd text-xs font-medium text-ink hover:border-violet/50 transition self-start">Open Calculator</button>
+      </div>
+    `).join('');
+  }
+});
+</script>
 </body>
 </html>
