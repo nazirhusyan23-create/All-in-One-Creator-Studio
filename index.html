@@ -112,8 +112,10 @@
     </div>
 
     <div class="px-4 sm:px-8 pb-16 flex-1">
-      <div class="max-w-6xl mx-auto grid grid-cols-1 xl:grid-cols-[1fr_300px] gap-6 items-start">
+      <div class="max-w-6xl mx-auto grid grid-cols-1 gap-6 items-start">
         <main class="min-w-0 flex flex-col gap-5">
+          
+          <!-- HOME PANEL -->
           <section id="panel-home" class="panel active flex-col gap-5">
             <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
               <div class="h-1 bg-rose-500"></div>
@@ -130,26 +132,66 @@
             </div>
           </section>
 
+          <!-- PHOTO TOOLS PANEL -->
           <section id="panel-photo" class="panel flex-col gap-5">
             <div class="rounded-2xl border border-brd bg-elev p-5 sm:p-6">
               <h2 class="font-display font-semibold text-lg text-ink">Background Remover &amp; Photo Studio</h2>
-              <p class="text-dim text-sm mt-0.5">Process and optimize your creative assets instantly.</p>
+              <p class="text-dim text-sm mt-0.5 mb-4">Process and optimize your creative assets instantly.</p>
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div class="p-4 rounded-xl border border-brd bg-elev2">
+                  <h4 class="font-display font-semibold text-sm text-ink">AI Background Remover</h4>
+                  <p class="text-xs text-dim mt-1">Upload images to automatically strip backgrounds for thumbnails and app icons.</p>
+                  <button class="mt-3 px-3 py-1.5 rounded-lg bg-violet text-xs font-medium text-white">Launch Tool</button>
+                </div>
+                <div class="p-4 rounded-xl border border-brd bg-elev2">
+                  <h4 class="font-display font-semibold text-sm text-ink">Batch Image Compressor</h4>
+                  <p class="text-xs text-dim mt-1">Optimize JPEG/PNG sizes for faster web and mobile app loading speeds.</p>
+                  <button class="mt-3 px-3 py-1.5 rounded-lg bg-violet text-xs font-medium text-white">Launch Tool</button>
+                </div>
+              </div>
             </div>
           </section>
 
+          <!-- VIDEO TOOLS PANEL -->
           <section id="panel-video" class="panel flex-col gap-5">
             <div class="rounded-2xl border border-brd bg-elev p-5 sm:p-6">
               <h2 class="font-display font-semibold text-lg text-ink">Video Trim &amp; Cut Suite</h2>
-              <p class="text-dim text-sm mt-0.5">Manage and edit video clips for your multi-platform channels.</p>
+              <p class="text-dim text-sm mt-0.5 mb-4">Manage and edit video clips for your multi-platform channels.</p>
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div class="p-4 rounded-xl border border-brd bg-elev2">
+                  <h4 class="font-display font-semibold text-sm text-ink">Video Trimmer</h4>
+                  <p class="text-xs text-dim mt-1">Cut promotional segments and short-form video previews.</p>
+                  <button class="mt-3 px-3 py-1.5 rounded-lg bg-amber text-xs font-medium text-base">Launch Tool</button>
+                </div>
+                <div class="p-4 rounded-xl border border-brd bg-elev2">
+                  <h4 class="font-display font-semibold text-sm text-ink">Resolution Resizer</h4>
+                  <p class="text-xs text-dim mt-1">Convert landscape clips into vertical 9:16 reels and shorts formats.</p>
+                  <button class="mt-3 px-3 py-1.5 rounded-lg bg-amber text-xs font-medium text-base">Launch Tool</button>
+                </div>
+              </div>
             </div>
           </section>
 
+          <!-- PDF TOOLS PANEL -->
           <section id="panel-pdf" class="panel flex-col gap-5">
             <div class="rounded-2xl border border-brd bg-elev p-5 sm:p-6">
               <h2 class="font-display font-semibold text-lg text-ink">PDF Utility Tools</h2>
-              <p class="text-dim text-sm mt-0.5">Merge, split, and compress documents efficiently.</p>
+              <p class="text-dim text-sm mt-0.5 mb-4">Merge, split, and compress documents efficiently.</p>
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div class="p-4 rounded-xl border border-brd bg-elev2">
+                  <h4 class="font-display font-semibold text-sm text-ink">Merge &amp; Split Documents</h4>
+                  <p class="text-xs text-dim mt-1">Combine multiple chapters or split large report documents seamlessly.</p>
+                  <button class="mt-3 px-3 py-1.5 rounded-lg bg-teal text-xs font-medium text-base">Launch Tool</button>
+                </div>
+                <div class="p-4 rounded-xl border border-brd bg-elev2">
+                  <h4 class="font-display font-semibold text-sm text-ink">PDF Compressor</h4>
+                  <p class="text-xs text-dim mt-1">Reduce PDF file size while maintaining text and graphic clarity.</p>
+                  <button class="mt-3 px-3 py-1.5 rounded-lg bg-teal text-xs font-medium text-base">Launch Tool</button>
+                </div>
+              </div>
             </div>
           </section>
+
         </main>
       </div>
     </div>
