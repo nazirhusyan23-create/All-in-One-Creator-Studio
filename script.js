@@ -50,7 +50,7 @@ function demoDownload(btn, label, tone) {
 }
 
 /* ============================= NAVIGATION ============================= */
-const panels = { photo: document.getElementById('panel-photo'), video: document.getElementById('panel-video'), pdf: document.getElementById('panel-pdf') };
+const panels = { home: document.getElementById('panel-home'), photo: document.getElementById('panel-photo'), video: document.getElementById('panel-video'), pdf: document.getElementById('panel-pdf') };
 function setCategory(cat) {
   Object.entries(panels).forEach(([k, el]) => el.classList.toggle('active', k === cat));
   document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
@@ -846,4 +846,251 @@ document.querySelectorAll('.nav-item, .mnav').forEach(btn => btn.addEventListene
     }, 1400);
   });
   demoDownload(document.getElementById('unlock-download'), 'Unlocked PDF', 'teal');
+})();
+
+/* ============================= HOME: REVENUE CALCULATORS ============================= */
+(() => {
+  const fmtMoney = (n) => (isFinite(n) ? '$' + n.toLocaleString(undefined, { maximumFractionDigits: 2 }) : '—');
+  const fmtNum = (n) => (isFinite(n) ? Math.round(n).toLocaleString() : '—');
+  const fmtPct = (n) => (isFinite(n) ? n.toFixed(2) + '%' : '—');
+
+  function field(cfg, id) {
+    const wrap = cfg.full ? 'col-span-2' : '';
+    if (cfg.type === 'select') {
+      return `<div class="${wrap}">
+        <label class="text-[11px] font-mono text-faint uppercase">${cfg.label}</label>
+        <select id="${id}-${cfg.key}" class="calc-field w-full mt-1 bg-elev3 border border-brd rounded-md px-2 py-1.5 text-sm focus:outline-none focus:border-current">
+          ${cfg.options.map(o => `<option value="${o.value}">${o.label}</option>`).join('')}
+        </select>
+      </div>`;
+    }
+    return `<div class="${wrap}">
+      <label class="text-[11px] font-mono text-faint uppercase">${cfg.label}</label>
+      <input id="${id}-${cfg.key}" type="number" step="any" value="${cfg.value}" class="calc-field w-full mt-1 bg-elev3 border border-brd rounded-md px-2 py-1.5 text-sm font-mono focus:outline-none focus:border-current">
+    </div>`;
+  }
+
+  const CALCULATORS = [
+    {
+      id: 'c-rate', title: 'Freelance Hourly Rate', color: '#8B7CF6',
+      desc: 'Find the hourly rate you need to charge to hit your income goal.',
+      fields: [
+        { key: 'income', label: 'Target annual income ($)', value: 60000 },
+        { key: 'weeksOff', label: 'Weeks off per year', value: 4 },
+        { key: 'hours', label: 'Billable hours / week', value: 25 },
+        { key: 'expenses', label: 'Business expenses / year ($)', value: 6000 },
+      ],
+      calc(v) {
+        const workWeeks = Math.max(1, 52 - v.weeksOff);
+        const billableHours = Math.max(1, workWeeks * v.hours);
+        const rate = (v.income + v.expenses) / billableHours;
+        return [
+          ['Billable hours / year', fmtNum(billableHours)],
+          ['Recommended hourly rate', fmtMoney(rate), true],
+        ];
+      },
+    },
+    {
+      id: 'c-yt', title: 'YouTube Ad Revenue', color: '#F5A524',
+      desc: 'Estimate monthly AdSense earnings from your channel views.',
+      fields: [
+        { key: 'views', label: 'Monthly views', value: 100000 },
+        { key: 'cpm', label: 'CPM ($ per 1000 views)', value: 4 },
+        { key: 'monetized', label: 'Monetized views (%)', value: 60 },
+      ],
+      calc(v) {
+        const monetizedViews = v.views * (v.monetized / 100);
+        const revenue = (monetizedViews / 1000) * v.cpm;
+        return [
+          ['Monetized views', fmtNum(monetizedViews)],
+          ['Estimated monthly revenue', fmtMoney(revenue), true],
+        ];
+      },
+    },
+    {
+      id: 'c-blog', title: 'Blog / Website Ad Revenue', color: '#2DD4BF',
+      desc: 'Turn pageviews and RPM into monthly and yearly ad income.',
+      fields: [
+        { key: 'pv', label: 'Monthly pageviews', value: 50000 },
+        { key: 'rpm', label: 'RPM ($ per 1000 views)', value: 8 },
+      ],
+      calc(v) {
+        const monthly = (v.pv / 1000) * v.rpm;
+        return [
+          ['Estimated monthly revenue', fmtMoney(monthly), true],
+          ['Estimated annual revenue', fmtMoney(monthly * 12)],
+        ];
+      },
+    },
+    {
+      id: 'c-aff', title: 'Affiliate Commission', color: '#8B7CF6',
+      desc: 'Project affiliate income from traffic, conversions and order value.',
+      fields: [
+        { key: 'clicks', label: 'Monthly affiliate clicks', value: 2000 },
+        { key: 'conv', label: 'Conversion rate (%)', value: 3 },
+        { key: 'aov', label: 'Avg order value ($)', value: 50 },
+        { key: 'comm', label: 'Commission rate (%)', value: 10 },
+      ],
+      calc(v) {
+        const sales = v.clicks * (v.conv / 100);
+        const revenue = sales * v.aov * (v.comm / 100);
+        return [
+          ['Sales / month', fmtNum(sales)],
+          ['Estimated monthly commission', fmtMoney(revenue), true],
+        ];
+      },
+    },
+    {
+      id: 'c-mrr', title: 'Subscription MRR / ARR', color: '#F5A524',
+      desc: 'Model recurring revenue and the impact of monthly churn.',
+      fields: [
+        { key: 'subs', label: 'Active subscribers', value: 200 },
+        { key: 'price', label: 'Price / month ($)', value: 15 },
+        { key: 'churn', label: 'Monthly churn (%)', value: 5 },
+      ],
+      calc(v) {
+        const mrr = v.subs * v.price;
+        const lost = mrr * (v.churn / 100);
+        return [
+          ['MRR', fmtMoney(mrr), true],
+          ['ARR (MRR × 12)', fmtMoney(mrr * 12)],
+          ['Net MRR after churn', fmtMoney(mrr - lost)],
+        ];
+      },
+    },
+    {
+      id: 'c-sponsor', title: 'Sponsored Post Pricing', color: '#2DD4BF',
+      desc: 'Suggested price range for a single sponsored post.',
+      fields: [
+        { key: 'followers', label: 'Followers', value: 20000 },
+        { key: 'eng', label: 'Engagement rate (%)', value: 3 },
+        { key: 'tier', label: 'Niche value', type: 'select', options: [
+          { value: 0.8, label: 'Standard' }, { value: 1.2, label: 'High-value (finance/tech/beauty)' }, { value: 0.6, label: 'Broad / low-CPM niche' },
+        ] },
+      ],
+      calc(v) {
+        const base = (v.followers / 1000) * 10 * v.tier * (1 + v.eng / 100);
+        return [
+          ['Suggested price (low)', fmtMoney(base * 0.8)],
+          ['Suggested price (high)', fmtMoney(base * 1.2), true],
+        ];
+      },
+    },
+    {
+      id: 'c-course', title: 'Online Course Profit', color: '#8B7CF6',
+      desc: 'Net profit after platform fees and one-time production cost.',
+      fields: [
+        { key: 'price', label: 'Course price ($)', value: 99 },
+        { key: 'students', label: 'Expected students', value: 150 },
+        { key: 'fee', label: 'Platform fee (%)', value: 10 },
+        { key: 'prod', label: 'Production cost ($)', value: 2000 },
+      ],
+      calc(v) {
+        const gross = v.price * v.students;
+        const feeAmt = gross * (v.fee / 100);
+        const profit = gross - feeAmt - v.prod;
+        return [
+          ['Gross revenue', fmtMoney(gross)],
+          ['Platform fees', fmtMoney(feeAmt)],
+          ['Net profit', fmtMoney(profit), true],
+        ];
+      },
+    },
+    {
+      id: 'c-pod', title: 'Print-on-Demand Margin', color: '#F5A524',
+      desc: 'Profit per unit after base cost, platform fee and ad spend.',
+      fields: [
+        { key: 'sell', label: 'Selling price ($)', value: 25 },
+        { key: 'base', label: 'Base product cost ($)', value: 12 },
+        { key: 'fee', label: 'Platform fee (%)', value: 5 },
+        { key: 'ad', label: 'Ad spend / unit ($)', value: 3 },
+      ],
+      calc(v) {
+        const feeAmt = v.sell * (v.fee / 100);
+        const profit = v.sell - v.base - feeAmt - v.ad;
+        const margin = v.sell ? (profit / v.sell) * 100 : 0;
+        return [
+          ['Profit / unit', fmtMoney(profit), true],
+          ['Margin', fmtPct(margin)],
+        ];
+      },
+    },
+    {
+      id: 'c-breakeven', title: 'Break-even Point', color: '#2DD4BF',
+      desc: 'How many units you need to sell to cover fixed costs.',
+      fields: [
+        { key: 'fixed', label: 'Fixed costs ($)', value: 5000 },
+        { key: 'price', label: 'Price / unit ($)', value: 40 },
+        { key: 'varCost', label: 'Variable cost / unit ($)', value: 15 },
+      ],
+      calc(v) {
+        const contribution = v.price - v.varCost;
+        const units = contribution > 0 ? v.fixed / contribution : Infinity;
+        return [
+          ['Break-even units', fmtNum(units), true],
+          ['Break-even revenue', fmtMoney(units * v.price)],
+        ];
+      },
+    },
+    {
+      id: 'c-social', title: 'Social Media Sponsorship', color: '#8B7CF6',
+      desc: 'Engagement rate and estimated monthly sponsorship income.',
+      fields: [
+        { key: 'followers', label: 'Followers', value: 15000 },
+        { key: 'likes', label: 'Avg likes + comments / post', value: 640 },
+        { key: 'rate', label: 'Rate per 1000 followers ($)', value: 10 },
+        { key: 'posts', label: 'Sponsored posts / month', value: 4 },
+      ],
+      calc(v) {
+        const engRate = v.followers ? (v.likes / v.followers) * 100 : 0;
+        const pricePerPost = (v.followers / 1000) * v.rate;
+        const monthly = pricePerPost * v.posts;
+        return [
+          ['Engagement rate', fmtPct(engRate)],
+          ['Price / sponsored post', fmtMoney(pricePerPost)],
+          ['Estimated monthly income', fmtMoney(monthly), true],
+        ];
+      },
+    },
+  ];
+
+  const grid = document.getElementById('calc-grid');
+  if (!grid) return;
+
+  CALCULATORS.forEach((cfg) => {
+    const card = document.createElement('div');
+    card.className = 'rounded-2xl border border-brd bg-elev overflow-hidden';
+    card.innerHTML = `
+      <div class="h-1" style="background:${cfg.color}"></div>
+      <div class="p-5 sm:p-6" style="color:${cfg.color}">
+        <div class="mb-4" style="color:inherit">
+          <h2 class="font-display font-semibold text-base text-ink">${cfg.title}</h2>
+          <p class="text-dim text-xs mt-0.5">${cfg.desc}</p>
+        </div>
+        <div class="grid grid-cols-2 gap-3">${cfg.fields.map(f => field(f, cfg.id)).join('')}</div>
+        <div id="${cfg.id}-out" class="mt-4 rounded-xl border border-brd bg-elev2 p-3 flex flex-col gap-1.5"></div>
+      </div>`;
+    grid.appendChild(card);
+
+    const out = card.querySelector(`#${cfg.id}-out`);
+    function readValues() {
+      const v = {};
+      cfg.fields.forEach((f) => {
+        const el = document.getElementById(`${cfg.id}-${f.key}`);
+        v[f.key] = f.type === 'select' ? parseFloat(el.value) : (parseFloat(el.value) || 0);
+      });
+      return v;
+    }
+    function render() {
+      const rows = cfg.calc(readValues());
+      out.innerHTML = rows.map(([label, value, strong]) =>
+        `<div class="flex items-center justify-between ${strong ? 'pt-1.5 mt-0.5 border-t border-brd' : ''}">
+          <span class="text-xs text-dim">${label}</span>
+          <span class="font-mono text-sm ${strong ? 'font-semibold' : ''}" style="color:${strong ? cfg.color : '#E8EAF0'}">${value}</span>
+        </div>`
+      ).join('');
+    }
+    card.querySelectorAll('.calc-field').forEach((el) => el.addEventListener('input', render));
+    render();
+  });
 })();
