@@ -49,9 +49,6 @@
 </head>
 <body class="bg-base text-ink font-sans antialiased min-h-screen">
 
-<!-- ================= TOASTS ================= -->
-<div id="toast-container" class="fixed bottom-4 right-4 left-4 sm:left-auto z-[100] flex flex-col gap-2 items-end pointer-events-none"></div>
-
 <div class="flex min-h-screen">
 
   <!-- ================= DESKTOP SIDEBAR ================= -->
@@ -69,46 +66,25 @@
     <nav class="flex flex-col gap-1" id="sidebar-nav">
       <button data-cat="home" class="nav-item active group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors">
         <span class="w-2 h-2 rounded-full shrink-0 bg-rose-500"></span>
-        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
         Home
       </button>
       <button data-cat="photo" class="nav-item group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors">
         <span class="w-2 h-2 rounded-full shrink-0 bg-violet"></span>
-        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-4 4-3-3-6 6"/></svg>
         Photo Tools
       </button>
       <button data-cat="video" class="nav-item group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors">
         <span class="w-2 h-2 rounded-full shrink-0 bg-amber"></span>
-        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="15" height="14" rx="2"/><path d="M17 9l5-3v12l-5-3"/></svg>
         Video Tools
       </button>
       <button data-cat="pdf" class="nav-item group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors">
         <span class="w-2 h-2 rounded-full shrink-0 bg-teal"></span>
-        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v5h5"/><path d="M8.5 15.5h1a1.5 1.5 0 0 0 0-3h-1v5"/></svg>
         PDF Tools
       </button>
     </nav>
-
-    <div class="mt-auto pt-6">
-      <div class="rounded-xl border border-brd bg-elev2 p-4">
-        <p class="text-xs font-semibold text-ink mb-1">Live Updates Stream</p>
-        <p class="text-[11px] text-dim leading-relaxed">Stay informed with real-time headlines, breaking coverage, and media insights.</p>
-      </div>
-    </div>
   </aside>
 
   <!-- ================= MAIN ================= -->
   <div class="flex-1 min-w-0 flex flex-col">
-
-    <!-- Top bar (mobile) -->
-    <header class="lg:hidden sticky top-0 z-40 flex items-center justify-between px-4 h-14 border-b border-brd bg-base/90 backdrop-blur">
-      <div class="flex items-center gap-2">
-        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-violet via-amber to-teal flex items-center justify-center">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 12L10 18L20 6" stroke="#0B0D12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <span class="font-display font-semibold text-sm">Dateline Live Wire</span>
-      </div>
-    </header>
 
     <!-- Hero / banner -->
     <div class="px-4 sm:px-8 pt-6 sm:pt-8">
@@ -119,10 +95,9 @@
           <p class="text-dim text-sm max-w-xl">Your live feed for breaking updates, trending stories, and digital media tools.</p>
         </div>
 
-        <!-- Live banner notification -->
         <div class="flex items-center gap-3 rounded-xl border border-teal/25 bg-teal-soft px-4 py-3 mb-6">
           <svg class="w-5 h-5 text-teal shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
-          <p class="text-sm text-ink"><span class="font-semibold">Live Broadcast Active.</span> <span class="text-dim">Streaming verified updates, global headlines, and interactive creator utilities directly to your browser.</span></p>
+          <p class="text-sm text-ink"><span class="font-semibold">Live Broadcast Active.</span> <span class="text-dim">Streaming verified updates and interactive calculators.</span></p>
         </div>
       </div>
     </div>
@@ -137,24 +112,11 @@
       </div>
     </div>
 
-    <!-- Ad: leaderboard 728x90 -->
-    <div class="px-4 sm:px-8">
-      <div class="max-w-6xl mx-auto mb-6">
-        <div class="w-full flex justify-center">
-          <div class="w-full max-w-[728px] h-[90px] rounded-lg border border-dashed border-brd bg-elev/50 flex items-center justify-center text-faint text-xs font-mono">
-            Advertisement · 728×90
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Content grid -->
     <div class="px-4 sm:px-8 pb-16 flex-1">
       <div class="max-w-6xl mx-auto grid grid-cols-1 xl:grid-cols-[1fr_300px] gap-6 items-start">
 
-        <!-- ===================== TOOL PANELS ===================== -->
         <main class="min-w-0 flex flex-col gap-5">
-
           <!-- ============ HOME PANEL ============ -->
           <section id="panel-home" class="panel active flex-col gap-5">
             <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
@@ -162,7 +124,7 @@
               <div class="p-5 sm:p-7">
                 <p class="font-mono text-[11px] tracking-widest uppercase mb-2 text-rose-500">Live Wire Stream</p>
                 <h2 class="font-display font-semibold text-xl sm:text-2xl mb-2">Breaking News &amp; Creator Calculators</h2>
-                <p class="text-dim text-sm max-w-2xl leading-relaxed">Welcome to Dateline Live Wire. Explore live news updates, project breakdowns, and ten free financial and content calculators designed to model your digital publishing and creator revenue streams securely in your browser.</p>
+                <p class="text-dim text-sm max-w-2xl leading-relaxed">Select any calculator below to model your digital publishing and creator revenue streams.</p>
               </div>
             </div>
 
@@ -174,59 +136,38 @@
 
           <!-- ============ PHOTO PANEL ============ -->
           <section id="panel-photo" class="panel flex-col gap-5">
-            <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
-              <div class="h-1 bg-violet"></div>
-              <div class="p-5 sm:p-6">
-                <div class="flex items-start justify-between gap-3 mb-4">
-                  <div>
-                    <h2 class="font-display font-semibold text-lg">Background Remover</h2>
-                    <p class="text-dim text-sm mt-0.5">Cut out the subject and drop in a transparent background.</p>
-                  </div>
-                  <span class="shrink-0 text-[10px] font-mono uppercase tracking-wide px-2 py-1 rounded-full bg-elev3 text-faint">Preview demo</span>
-                </div>
-                <div class="grid sm:grid-cols-2 gap-4">
-                  <div class="dropzone relative rounded-xl border-2 border-dashed border-brd text-violet aspect-video flex flex-col items-center justify-center gap-2">
-                    <p class="text-xs text-dim">Upload an image to test background removal</p>
-                  </div>
-                  <div class="rounded-xl aspect-video flex items-center justify-center border border-brd bg-elev2">
-                    <p class="text-faint text-xs font-mono">Result preview</p>
-                  </div>
-                </div>
-              </div>
+            <div class="rounded-2xl border border-brd bg-elev p-5 sm:p-6">
+              <h2 class="font-display font-semibold text-lg">Background Remover</h2>
+              <p class="text-dim text-sm mt-0.5">Photo editing tool panel active.</p>
             </div>
           </section>
 
           <!-- ============ VIDEO PANEL ============ -->
           <section id="panel-video" class="panel flex-col gap-5">
-            <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
-              <div class="h-1 bg-amber"></div>
-              <div class="p-5 sm:p-6">
-                <h2 class="font-display font-semibold text-lg">Video Trim &amp; Cut</h2>
-                <p class="text-dim text-sm mt-0.5 mb-4">Pick in/out points and preview selected range.</p>
-                <div class="dropzone relative rounded-xl border-2 border-dashed border-brd text-amber aspect-video flex flex-col items-center justify-center gap-2">
-                  <p class="text-xs text-dim">Upload a video to start trimming</p>
-                </div>
-              </div>
+            <div class="rounded-2xl border border-brd bg-elev p-5 sm:p-6">
+              <h2 class="font-display font-semibold text-lg">Video Trim &amp; Cut</h2>
+              <p class="text-dim text-sm mt-0.5">Video tools panel active.</p>
             </div>
           </section>
 
           <!-- ============ PDF PANEL ============ -->
           <section id="panel-pdf" class="panel flex-col gap-5">
-            <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
-              <div class="h-1 bg-teal"></div>
-              <div class="p-5 sm:p-6">
-                <h2 class="font-display font-semibold text-lg">PDF to Word / Image Converter</h2>
-                <p class="text-dim text-sm mt-0.5 mb-4">Convert PDF documents securely.</p>
-                <div class="dropzone relative rounded-xl border-2 border-dashed border-brd text-teal py-10 flex flex-col items-center justify-center gap-2">
-                  <p class="text-xs text-dim">Drop a PDF file here</p>
-                </div>
-              </div>
+            <div class="rounded-2xl border border-brd bg-elev p-5 sm:p-6">
+              <h2 class="font-display font-semibold text-lg">PDF Tools</h2>
+              <p class="text-dim text-sm mt-0.5">PDF utility panel active.</p>
             </div>
           </section>
-
         </main>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- CALCULATOR MODAL CONTAINER -->
+<div id="calc-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+  <div class="bg-elev2 border border-brd rounded-2xl max-w-lg w-full p-6 relative shadow-2xl">
+    <button onclick="closeCalculator()" class="absolute top-4 right-4 text-dim hover:text-ink text-sm font-mono bg-elev3 px-2.5 py-1 rounded-lg">✕ Close</button>
+    <div id="modal-content"></div>
   </div>
 </div>
 
@@ -260,22 +201,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Calculators Grid
+  // Calculators Grid Data with Functional Logic
+  const calculators = [
+    { id: 1, title: 'Google AdSense Revenue Estimator', desc: 'Estimate monthly earnings based on page views and CTR.', fields: ['Monthly Page Views', 'Average CTR (%)', 'Cost Per Click ($)'], calc: (v) => `Estimated Monthly Earnings: $${((v[0] * (v[1]/100)) * v[2]).toFixed(2)}` },
+    { id: 2, title: 'Ezoic Earnings Calculator', desc: 'Project uplift from advanced ad layout optimization.', fields: ['Monthly Page Views', 'Current RPM ($)'], calc: (v) => `Estimated Optimized Earnings: $${((v[0] / 1000) * (v[2] * 1.35)).toFixed(2)} (35% average lift)` },
+    { id: 3, title: 'Media.net Contextual Yield', desc: 'Calculate potential revenue from targeted contextual ads.', fields: ['Search Queries / Views', 'RPM ($)'], calc: (v) => `Projected Contextual Yield: $${((v[0] / 1000) * v[1]).toFixed(2)}` },
+    { id: 4, title: 'AdMob Mobile App Revenue', desc: 'Model in-app banner, interstitial, and rewarded ad income.', fields: ['Daily Active Users (DAU)', 'Impressions per User', 'eCPM ($)'], calc: (v) => `Monthly AdMob Revenue: $${(((v[0] * v[1] * 30) / 1000) * v[2]).toFixed(2)}` },
+    { id: 5, title: 'Amazon Appstore Royalties', desc: 'Estimate developer payouts for digital app distributions.', fields: ['Paid App Downloads', 'App Price ($)'], calc: (v) => `Estimated Net Royalty (70%): $${(v[0] * v[1] * 0.70).toFixed(2)}` },
+    { id: 6, title: 'Payoneer Fee & Conversion Calculator', desc: 'Calculate net funds after international transfer fees.', fields: ['Withdrawal Amount ($)', 'Fee Percentage (%)'], calc: (v) => `Net Received Amount: $${(v[0] - (v[0] * (v[1]/100))).toFixed(2)}` },
+    { id: 7, title: 'Content Traffic Growth Model', desc: 'Project organic traffic scaling over 12 months.', fields: ['Current Monthly Visitors', 'Monthly Growth Rate (%)'], calc: (v) => `Projected Visitors (Month 12): ${Math.round(v[0] * Math.pow(1 + (v[1]/100), 12))}` },
+    { id: 8, title: 'Vercel Bandwidth Cost Estimator', desc: 'Monitor static hosting and serverless function limits.', fields: ['Total GB Bandwidth Used', 'Cost per Extra GB ($)'], calc: (v) => v[0] <= 100 ? `Within Free Tier Limit ($0.00)` : `Estimated Cost: $${((v[0] - 100) * v[1]).toFixed(2)}` },
+    { id: 9, title: 'App Monetization ROI Calculator', desc: 'Evaluate development cost vs. ad network returns.', fields: ['Total Development Cost ($)', 'Monthly Ad Revenue ($)'], calc: (v) => `Break-even Period: ${(v[0] / v[1]).toFixed(1)} Months` },
+    { id: 10, title: 'Author / Researcher Citation Impact', desc: 'Track academic publication metrics and visibility.', fields: ['Total Published Papers', 'Average Citations per Paper'], calc: (v) => `Total Citation Impact Score: ${v[0] * v[1]}` }
+  ];
+
   const calcGrid = document.getElementById('calc-grid');
   if (calcGrid) {
-    const calculators = [
-      { title: 'Google AdSense Revenue Estimator', desc: 'Estimate monthly earnings based on page views and CTR.' },
-      { title: 'Ezoic Earnings Calculator', desc: 'Project uplift from advanced ad layout optimization.' },
-      { title: 'Media.net Contextual Yield', desc: 'Calculate potential revenue from targeted contextual ads.' },
-      { title: 'AdMob Mobile App Revenue', desc: 'Model in-app banner, interstitial, and rewarded ad income.' },
-      { title: 'Amazon Appstore Royalties', desc: 'Estimate developer payouts for digital app distributions.' },
-      { title: 'Payoneer Fee & Conversion Calculator', desc: 'Calculate net funds after international transfer fees.' },
-      { title: 'Content Traffic Growth Model', desc: 'Project organic traffic scaling over 12 months.' },
-      { title: 'Vercel Bandwidth Cost Estimator', desc: 'Monitor static hosting and serverless function limits.' },
-      { title: 'App Monetization ROI Calculator', desc: 'Evaluate development cost vs. ad network returns.' },
-      { title: 'Author / Researcher Citation Impact', desc: 'Track academic publication metrics and visibility.' }
-    ];
-
     calcGrid.innerHTML = calculators.map((calc, i) => `
       <div class="rounded-xl border border-brd bg-elev2 p-4 flex flex-col justify-between hover:border-violet/40 transition">
         <div>
@@ -283,11 +224,49 @@ document.addEventListener('DOMContentLoaded', () => {
           <h4 class="font-display font-semibold text-sm text-ink mt-1">${calc.title}</h4>
           <p class="text-xs text-dim mt-1 leading-relaxed">${calc.desc}</p>
         </div>
-        <button onclick="alert('Calculator 0${i+1} initialized.')" class="mt-4 py-1.5 px-3 rounded-lg bg-elev3 border border-brd text-xs font-medium text-ink hover:border-violet/50 transition self-start">Open Calculator</button>
+        <button onclick='openCalculator(${JSON.stringify(calc)})' class="mt-4 py-1.5 px-3 rounded-lg bg-elev3 border border-brd text-xs font-medium text-ink hover:border-violet/50 transition self-start">Open Calculator</button>
       </div>
     `).join('');
   }
 });
+
+function openCalculator(calc) {
+  const modal = document.getElementById('calc-modal');
+  const content = document.getElementById('modal-content');
+  
+  let fieldsHTML = calc.fields.map((field, idx) => `
+    <div class="mb-3">
+      <label class="block text-xs font-mono text-dim mb-1">${field}</label>
+      <input type="number" id="calc-input-${idx}" value="1000" class="w-full bg-elev3 border border-brd rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:border-violet">
+    </div>
+  `).join('');
+
+  content.innerHTML = `
+    <h3 class="font-display font-semibold text-lg text-ink mb-1">${calc.title}</h3>
+    <p class="text-xs text-dim mb-4">${calc.desc}</p>
+    <div class="space-y-3 mb-5">${fieldsHTML}</div>
+    <button onclick='calculateResult(${JSON.stringify(calc.fields)}, ${JSON.stringify(calc.calc.toString())})' class="w-full py-2.5 rounded-lg bg-violet text-base font-semibold text-base hover:opacity-90 transition">Calculate Results</button>
+    <div id="calc-result" class="mt-4 p-3 rounded-lg bg-elev3 border border-brd text-sm font-mono text-teal text-center hidden"></div>
+  `;
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+function closeCalculator() {
+  const modal = document.getElementById('calc-modal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+}
+
+function calculateResult(fields, calcFuncStr) {
+  let values = fields.map((_, idx) => parseFloat(document.getElementById(`calc-input-${idx}`).value) || 0);
+  let calcFunc = eval('(' + calcFuncStr + ')');
+  let resultText = calcFunc(values);
+  
+  const resDiv = document.getElementById('calc-result');
+  resDiv.innerText = resultText;
+  resDiv.classList.remove('hidden');
+}
 </script>
 </body>
 </html>
