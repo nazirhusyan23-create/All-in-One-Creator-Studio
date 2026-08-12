@@ -86,7 +86,6 @@
   <!-- ================= MAIN ================= -->
   <div class="flex-1 min-w-0 flex flex-col">
 
-    <!-- Hero / banner -->
     <div class="px-4 sm:px-8 pt-6 sm:pt-8">
       <div class="max-w-6xl mx-auto">
         <div class="flex flex-col gap-1.5 mb-5">
@@ -112,12 +111,9 @@
       </div>
     </div>
 
-    <!-- Content grid -->
     <div class="px-4 sm:px-8 pb-16 flex-1">
       <div class="max-w-6xl mx-auto grid grid-cols-1 xl:grid-cols-[1fr_300px] gap-6 items-start">
-
         <main class="min-w-0 flex flex-col gap-5">
-          <!-- ============ HOME PANEL ============ -->
           <section id="panel-home" class="panel active flex-col gap-5">
             <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
               <div class="h-1 bg-rose-500"></div>
@@ -134,7 +130,6 @@
             </div>
           </section>
 
-          <!-- ============ PHOTO PANEL ============ -->
           <section id="panel-photo" class="panel flex-col gap-5">
             <div class="rounded-2xl border border-brd bg-elev p-5 sm:p-6">
               <h2 class="font-display font-semibold text-lg">Background Remover</h2>
@@ -142,7 +137,6 @@
             </div>
           </section>
 
-          <!-- ============ VIDEO PANEL ============ -->
           <section id="panel-video" class="panel flex-col gap-5">
             <div class="rounded-2xl border border-brd bg-elev p-5 sm:p-6">
               <h2 class="font-display font-semibold text-lg">Video Trim &amp; Cut</h2>
@@ -150,7 +144,6 @@
             </div>
           </section>
 
-          <!-- ============ PDF PANEL ============ -->
           <section id="panel-pdf" class="panel flex-col gap-5">
             <div class="rounded-2xl border border-brd bg-elev p-5 sm:p-6">
               <h2 class="font-display font-semibold text-lg">PDF Tools</h2>
@@ -200,21 +193,22 @@ document.addEventListener('DOMContentLoaded', () => {
       if (cat) switchTab(cat);
     });
   });
+});
 
-  // Calculators Grid Data with Functional Logic
-  const calculators = [
-    { id: 1, title: 'Google AdSense Revenue Estimator', desc: 'Estimate monthly earnings based on page views and CTR.', fields: ['Monthly Page Views', 'Average CTR (%)', 'Cost Per Click ($)'], calc: (v) => `Estimated Monthly Earnings: $${((v[0] * (v[1]/100)) * v[2]).toFixed(2)}` },
-    { id: 2, title: 'Ezoic Earnings Calculator', desc: 'Project uplift from advanced ad layout optimization.', fields: ['Monthly Page Views', 'Current RPM ($)'], calc: (v) => `Estimated Optimized Earnings: $${((v[0] / 1000) * (v[2] * 1.35)).toFixed(2)} (35% average lift)` },
-    { id: 3, title: 'Media.net Contextual Yield', desc: 'Calculate potential revenue from targeted contextual ads.', fields: ['Search Queries / Views', 'RPM ($)'], calc: (v) => `Projected Contextual Yield: $${((v[0] / 1000) * v[1]).toFixed(2)}` },
-    { id: 4, title: 'AdMob Mobile App Revenue', desc: 'Model in-app banner, interstitial, and rewarded ad income.', fields: ['Daily Active Users (DAU)', 'Impressions per User', 'eCPM ($)'], calc: (v) => `Monthly AdMob Revenue: $${(((v[0] * v[1] * 30) / 1000) * v[2]).toFixed(2)}` },
-    { id: 5, title: 'Amazon Appstore Royalties', desc: 'Estimate developer payouts for digital app distributions.', fields: ['Paid App Downloads', 'App Price ($)'], calc: (v) => `Estimated Net Royalty (70%): $${(v[0] * v[1] * 0.70).toFixed(2)}` },
-    { id: 6, title: 'Payoneer Fee & Conversion Calculator', desc: 'Calculate net funds after international transfer fees.', fields: ['Withdrawal Amount ($)', 'Fee Percentage (%)'], calc: (v) => `Net Received Amount: $${(v[0] - (v[0] * (v[1]/100))).toFixed(2)}` },
-    { id: 7, title: 'Content Traffic Growth Model', desc: 'Project organic traffic scaling over 12 months.', fields: ['Current Monthly Visitors', 'Monthly Growth Rate (%)'], calc: (v) => `Projected Visitors (Month 12): ${Math.round(v[0] * Math.pow(1 + (v[1]/100), 12))}` },
-    { id: 8, title: 'Vercel Bandwidth Cost Estimator', desc: 'Monitor static hosting and serverless function limits.', fields: ['Total GB Bandwidth Used', 'Cost per Extra GB ($)'], calc: (v) => v[0] <= 100 ? `Within Free Tier Limit ($0.00)` : `Estimated Cost: $${((v[0] - 100) * v[1]).toFixed(2)}` },
-    { id: 9, title: 'App Monetization ROI Calculator', desc: 'Evaluate development cost vs. ad network returns.', fields: ['Total Development Cost ($)', 'Monthly Ad Revenue ($)'], calc: (v) => `Break-even Period: ${(v[0] / v[1]).toFixed(1)} Months` },
-    { id: 10, title: 'Author / Researcher Citation Impact', desc: 'Track academic publication metrics and visibility.', fields: ['Total Published Papers', 'Average Citations per Paper'], calc: (v) => `Total Citation Impact Score: ${v[0] * v[1]}` }
-  ];
+const calculators = [
+  { id: 1, title: 'Google AdSense Revenue Estimator', desc: 'Estimate monthly earnings based on page views and CTR.', fields: ['Monthly Page Views', 'Average CTR (%)', 'Cost Per Click ($)'] },
+  { id: 2, title: 'Ezoic Earnings Calculator', desc: 'Project uplift from advanced ad layout optimization.', fields: ['Monthly Page Views', 'Current RPM ($)'] },
+  { id: 3, title: 'Media.net Contextual Yield', desc: 'Calculate potential revenue from targeted contextual ads.', fields: ['Search Queries / Views', 'RPM ($)'] },
+  { id: 4, title: 'AdMob Mobile App Revenue', desc: 'Model in-app banner, interstitial, and rewarded ad income.', fields: ['Daily Active Users (DAU)', 'Impressions per User', 'eCPM ($)'] },
+  { id: 5, title: 'Amazon Appstore Royalties', desc: 'Estimate developer payouts for digital app distributions.', fields: ['Paid App Downloads', 'App Price ($)'] },
+  { id: 6, title: 'Payoneer Fee & Conversion Calculator', desc: 'Calculate net funds after international transfer fees.', fields: ['Withdrawal Amount ($)', 'Fee Percentage (%)'] },
+  { id: 7, title: 'Content Traffic Growth Model', desc: 'Project organic traffic scaling over 12 months.', fields: ['Current Monthly Visitors', 'Monthly Growth Rate (%)'] },
+  { id: 8, title: 'Vercel Bandwidth Cost Estimator', desc: 'Monitor static hosting and serverless function limits.', fields: ['Total GB Bandwidth Used', 'Cost per Extra GB ($)'] },
+  { id: 9, title: 'App Monetization ROI Calculator', desc: 'Evaluate development cost vs. ad network returns.', fields: ['Total Development Cost ($)', 'Monthly Ad Revenue ($)'] },
+  { id: 10, title: 'Author / Researcher Citation Impact', desc: 'Track academic publication metrics and visibility.', fields: ['Total Published Papers', 'Average Citations per Paper'] }
+];
 
+document.addEventListener('DOMContentLoaded', () => {
   const calcGrid = document.getElementById('calc-grid');
   if (calcGrid) {
     calcGrid.innerHTML = calculators.map((calc, i) => `
@@ -224,13 +218,16 @@ document.addEventListener('DOMContentLoaded', () => {
           <h4 class="font-display font-semibold text-sm text-ink mt-1">${calc.title}</h4>
           <p class="text-xs text-dim mt-1 leading-relaxed">${calc.desc}</p>
         </div>
-        <button onclick='openCalculator(${JSON.stringify(calc)})' class="mt-4 py-1.5 px-3 rounded-lg bg-elev3 border border-brd text-xs font-medium text-ink hover:border-violet/50 transition self-start">Open Calculator</button>
+        <button onclick="openCalculator(${calc.id})" class="mt-4 py-1.5 px-3 rounded-lg bg-elev3 border border-brd text-xs font-medium text-ink hover:border-violet/50 transition self-start">Open Calculator</button>
       </div>
     `).join('');
   }
 });
 
-function openCalculator(calc) {
+function openCalculator(id) {
+  const calc = calculators.find(c => c.id === id);
+  if (!calc) return;
+
   const modal = document.getElementById('calc-modal');
   const content = document.getElementById('modal-content');
   
@@ -245,7 +242,7 @@ function openCalculator(calc) {
     <h3 class="font-display font-semibold text-lg text-ink mb-1">${calc.title}</h3>
     <p class="text-xs text-dim mb-4">${calc.desc}</p>
     <div class="space-y-3 mb-5">${fieldsHTML}</div>
-    <button onclick='calculateResult(${JSON.stringify(calc.fields)}, ${JSON.stringify(calc.calc.toString())})' class="w-full py-2.5 rounded-lg bg-violet text-base font-semibold text-base hover:opacity-90 transition">Calculate Results</button>
+    <button onclick="calculateResult(${calc.id})" class="w-full py-2.5 rounded-lg bg-violet text-base font-semibold text-base hover:opacity-90 transition">Calculate Results</button>
     <div id="calc-result" class="mt-4 p-3 rounded-lg bg-elev3 border border-brd text-sm font-mono text-teal text-center hidden"></div>
   `;
   modal.classList.remove('hidden');
@@ -258,13 +255,24 @@ function closeCalculator() {
   modal.classList.remove('flex');
 }
 
-function calculateResult(fields, calcFuncStr) {
-  let values = fields.map((_, idx) => parseFloat(document.getElementById(`calc-input-${idx}`).value) || 0);
-  let calcFunc = eval('(' + calcFuncStr + ')');
-  let resultText = calcFunc(values);
-  
+function calculateResult(id) {
+  const calc = calculators.find(c => c.id === id);
+  let v = calc.fields.map((_, idx) => parseFloat(document.getElementById(`calc-input-${idx}`).value) || 0);
+  let resText = "";
+
+  if (id === 1) resText = `Estimated Monthly Earnings: $${((v[0] * (v[1]/100)) * v[2]).toFixed(2)}`;
+  else if (id === 2) resText = `Estimated Optimized Earnings: $${((v[0] / 1000) * (v[1] * 1.35)).toFixed(2)} (35% average lift)`;
+  else if (id === 3) resText = `Projected Contextual Yield: $${((v[0] / 1000) * v[1]).toFixed(2)}`;
+  else if (id === 4) resText = `Monthly AdMob Revenue: $${(((v[0] * v[1] * 30) / 1000) * v[2]).toFixed(2)}`;
+  else if (id === 5) resText = `Estimated Net Royalty (70%): $${(v[0] * v[1] * 0.70).toFixed(2)}`;
+  else if (id === 6) resText = `Net Received Amount: $${(v[0] - (v[0] * (v[1]/100))).toFixed(2)}`;
+  else if (id === 7) resText = `Projected Visitors (Month 12): ${Math.round(v[0] * Math.pow(1 + (v[1]/100), 12))}`;
+  else if (id === 8) resText = v[0] <= 100 ? `Within Free Tier Limit ($0.00)` : `Estimated Cost: $${((v[0] - 100) * v[1]).toFixed(2)}`;
+  else if (id === 9) resText = `Break-even Period: ${(v[0] / (v[1] || 1)).toFixed(1)} Months`;
+  else if (id === 10) resText = `Total Citation Impact Score: ${v[0] * v[1]}`;
+
   const resDiv = document.getElementById('calc-result');
-  resDiv.innerText = resultText;
+  resDiv.innerText = resText;
   resDiv.classList.remove('hidden');
 }
 </script>
