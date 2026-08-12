@@ -60,7 +60,12 @@
     </div>
 
     <nav class="flex flex-col gap-1" id="sidebar-nav">
-      <button data-cat="photo" class="nav-item active group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors" style="--accent:#8B7CF6;">
+      <button data-cat="home" class="nav-item active group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors" style="--accent:#F43F5E;">
+        <span class="rail-dot w-2 h-2 rounded-full shrink-0" style="background:#F43F5E;color:#F43F5E;"></span>
+        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
+        Home
+      </button>
+      <button data-cat="photo" class="nav-item group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors" style="--accent:#8B7CF6;">
         <span class="rail-dot w-2 h-2 rounded-full shrink-0" style="background:#8B7CF6;color:#8B7CF6;"></span>
         <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-4 4-3-3-6 6"/></svg>
         Photo Tools
@@ -118,7 +123,8 @@
     <!-- Mobile category tabs -->
     <div class="lg:hidden px-4 sm:px-8 -mt-1 mb-2">
       <div class="max-w-6xl mx-auto flex gap-1 border-b border-brd overflow-x-auto">
-        <button data-cat="photo" class="mnav active tab-underline text-violet px-3 py-2.5 text-sm font-medium whitespace-nowrap">Photo Tools</button>
+        <button data-cat="home" class="mnav active tab-underline px-3 py-2.5 text-sm font-medium whitespace-nowrap" style="color:#F43F5E;">Home</button>
+        <button data-cat="photo" class="mnav tab-underline text-violet px-3 py-2.5 text-sm font-medium whitespace-nowrap is-dim">Photo Tools</button>
         <button data-cat="video" class="mnav tab-underline text-amber px-3 py-2.5 text-sm font-medium whitespace-nowrap is-dim">Video Tools</button>
         <button data-cat="pdf" class="mnav tab-underline text-teal px-3 py-2.5 text-sm font-medium whitespace-nowrap is-dim">PDF Tools</button>
       </div>
@@ -142,8 +148,26 @@
         <!-- ===================== TOOL PANELS ===================== -->
         <main class="min-w-0 flex flex-col gap-5">
 
+          <!-- ============ HOME PANEL ============ -->
+          <section id="panel-home" class="panel active fade-in flex flex-col gap-5">
+
+            <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
+              <div class="h-1" style="background:#F43F5E;"></div>
+              <div class="p-5 sm:p-7">
+                <p class="font-mono text-[11px] tracking-widest uppercase mb-2" style="color:#F43F5E;">Welcome</p>
+                <h2 class="font-display font-semibold text-xl sm:text-2xl mb-2">Plan your creator income</h2>
+                <p class="text-dim text-sm max-w-2xl leading-relaxed">Ten free, browser-based calculators for pricing your work, estimating ad and sponsorship revenue, and finding your break-even point — plus the Photo, Video and PDF tools in the tabs above. Everything runs locally; nothing is uploaded anywhere.</p>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="font-display font-semibold text-base mb-3">Revenue Calculators</h3>
+              <div id="calc-grid" class="grid sm:grid-cols-2 gap-5"></div>
+            </div>
+          </section>
+
           <!-- ============ PHOTO PANEL ============ -->
-          <section id="panel-photo" class="panel active fade-in flex flex-col gap-5">
+          <section id="panel-photo" class="panel fade-in flex flex-col gap-5">
 
             <!-- Background Remover (mockup) -->
             <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
