@@ -11,16 +11,16 @@
 <meta name="keywords" content="creator tools, background remover, image compressor, video trimmer, PDF merge, PDF compressor, AdSense calculator, creator revenue calculator, browser-based tools">
 <meta name="author" content="All-in-One Creator">
 <meta name="robots" content="index, follow, max-image-preview:large">
-<link rel="canonical" href="https://all-in-one-creator-sigma.vercel.app/">
+<link rel="canonical" href="https://free-online-tools-sigma.vercel.app/">
 <meta name="theme-color" content="#4F46E5">
 
-<!-- ================= OPEN GRAPH (Facebook, LinkedIn, Discord, etc.) ================= -->
+<!-- ================= OPEN GRAPH ================= -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="All-in-One Creator">
 <meta property="og:title" content="All-in-One Creator — Free Browser-Based Creator Tools &amp; Revenue Calculators">
 <meta property="og:description" content="Background eraser, image compressor, video trimmer, and PDF tools that run 100% in your browser — plus 10 free revenue calculators for creators.">
-<meta property="og:url" content="https://all-in-one-creator-sigma.vercel.app/">
-<meta property="og:image" content="https://all-in-one-creator-sigma.vercel.app/og-image.png">
+<meta property="og:url" content="https://free-online-tools-sigma.vercel.app/">
+<meta property="og:image" content="https://free-online-tools-sigma.vercel.app/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="en_US">
@@ -29,18 +29,18 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="All-in-One Creator — Free Browser-Based Creator Tools">
 <meta name="twitter:description" content="Background eraser, image compressor, video trimmer, and PDF tools that run 100% in your browser — plus 10 free revenue calculators for creators.">
-<meta name="twitter:image" content="https://all-in-one-creator-sigma.vercel.app/og-image.png">
+<meta name="twitter:image" content="https://free-online-tools-sigma.vercel.app/og-image.png">
 
-<!-- ================= FAVICON (inline SVG, no extra files needed) ================= -->
+<!-- ================= FAVICON ================= -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%234F46E5'/%3E%3Cstop offset='50%25' stop-color='%237C5CFC'/%3E%3Cstop offset='100%25' stop-color='%230D9488'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='24' height='24' rx='6' fill='url(%23g)'/%3E%3Cpath d='M4 12L10 18L20 6' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E">
 
-<!-- ================= STRUCTURED DATA (JSON-LD) ================= -->
+<!-- ================= STRUCTURED DATA ================= -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "All-in-One Creator",
-  "url": "https://all-in-one-creator-sigma.vercel.app/",
+  "url": "https://free-online-tools-sigma.vercel.app/",
   "description": "Free, browser-based creator toolkit: background eraser, image compressor, video trimmer, PDF merge/split/compress, plus revenue calculators for creators. All processing runs client-side.",
   "applicationCategory": "MultimediaApplication",
   "operatingSystem": "Any (runs in a modern web browser)",
@@ -88,7 +88,7 @@
 <style>
   .panel { display: none; }
   .panel.active { display: flex; }
-  .nav-item { opacity: 0.75; }
+  .nav-item { opacity: 0.75; cursor: pointer; }
   .nav-item.active { opacity: 1; background: #4F46E5; color: #FFFFFF; box-shadow: 0 1px 2px rgba(79,70,229,0.25); }
 </style>
 </head>
@@ -112,9 +112,8 @@
       <button data-cat="photo" class="nav-item shrink-0 px-3.5 py-2 rounded-full text-sm font-semibold text-dim hover:text-ink hover:bg-elev3 transition-colors">Photo Tools</button>
       <button data-cat="video" class="nav-item shrink-0 px-3.5 py-2 rounded-full text-sm font-semibold text-dim hover:text-ink hover:bg-elev3 transition-colors">Video Tools</button>
       <button data-cat="pdf" class="nav-item shrink-0 px-3.5 py-2 rounded-full text-sm font-semibold text-dim hover:text-ink hover:bg-elev3 transition-colors">PDF Tools</button>
-      <!-- About & Contact Links Added Here -->
-      <a href="about.html" class="nav-item shrink-0 px-3.5 py-2 rounded-full text-sm font-semibold text-dim hover:text-ink hover:bg-elev3 transition-colors inline-block">About Us</a>
-      <a href="contact.html" class="nav-item shrink-0 px-3.5 py-2 rounded-full text-sm font-semibold text-dim hover:text-ink hover:bg-elev3 transition-colors inline-block">Contact Us</a>
+      <button onclick="openInfoModal('about')" class="nav-item shrink-0 px-3.5 py-2 rounded-full text-sm font-semibold text-dim hover:text-ink hover:bg-elev3 transition-colors">About Us</button>
+      <button onclick="openInfoModal('contact')" class="nav-item shrink-0 px-3.5 py-2 rounded-full text-sm font-semibold text-dim hover:text-ink hover:bg-elev3 transition-colors">Contact Us</button>
     </nav>
 
     <div class="hidden md:flex items-center gap-1.5 text-[11px] font-mono text-teal bg-teal-soft px-2.5 py-1.5 rounded-full border border-teal/20 shrink-0">
@@ -190,7 +189,7 @@
           <h2 class="font-display font-bold text-lg text-ink">Background Eraser &amp; Photo Studio</h2>
           <p class="text-dim text-sm mt-0.5 mb-4">Process and optimize your creative assets instantly using native browser Canvas APIs — no upload required.</p>
           <div class="grid sm:grid-cols-2 gap-4">
-            <div class="p-4 rounded-2xl border border-brd bg-elev2 lift-card">
+            <div class="p-4 rounded-2xl border border-brd bg-elev2">
               <div class="w-10 h-10 rounded-xl bg-violet-soft flex items-center justify-center mb-3">
                 <svg class="text-violet" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.66V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h5.34"/><circle cx="9" cy="10" r="2"/><path d="M4 20l5-5a2 2 0 0 1 2.83 0L15 18"/><path d="M17 3l4 4M21 3l-4 4"/></svg>
               </div>
@@ -198,7 +197,7 @@
               <p class="text-xs text-dim mt-1">Upload an image to lift a flat or gradient background using an edge-flood-fill algorithm that runs entirely on your device's Canvas.</p>
               <button onclick="openTool('bg-remover')" class="mt-3 px-3.5 py-1.5 rounded-full bg-violet text-xs font-semibold text-white hover:opacity-90 transition">Launch Tool</button>
             </div>
-            <div class="p-4 rounded-2xl border border-brd bg-elev2 lift-card">
+            <div class="p-4 rounded-2xl border border-brd bg-elev2">
               <div class="w-10 h-10 rounded-xl bg-violet-soft flex items-center justify-center mb-3">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-violet"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/></svg>
               </div>
@@ -216,7 +215,7 @@
           <h2 class="font-display font-bold text-lg text-ink">Video Trim &amp; Resize Suite</h2>
           <p class="text-dim text-sm mt-0.5 mb-4">Trim and reformat clips using your browser's native playback, Canvas, and MediaRecorder APIs — no plugins, no uploads.</p>
           <div class="grid sm:grid-cols-2 gap-4">
-            <div class="p-4 rounded-2xl border border-brd bg-elev2 lift-card">
+            <div class="p-4 rounded-2xl border border-brd bg-elev2">
               <div class="w-10 h-10 rounded-xl bg-amber-soft flex items-center justify-center mb-3">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber"><path d="M6 3v18M18 3v18M3 8h4M3 16h4M17 8h4M17 16h4M3 12h18"/></svg>
               </div>
@@ -224,7 +223,7 @@
               <p class="text-xs text-dim mt-1">Cut promotional segments and short-form video previews with precise start/end control. Exports a WebM file.</p>
               <button onclick="openTool('video-trim')" class="mt-3 px-3.5 py-1.5 rounded-full bg-amber text-xs font-semibold text-white hover:opacity-90 transition">Launch Tool</button>
             </div>
-            <div class="p-4 rounded-2xl border border-brd bg-elev2 lift-card">
+            <div class="p-4 rounded-2xl border border-brd bg-elev2">
               <div class="w-10 h-10 rounded-xl bg-amber-soft flex items-center justify-center mb-3">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber"><rect x="3" y="4" width="18" height="12" rx="1.5"/><rect x="8.5" y="18" width="7" height="3" rx="1"/></svg>
               </div>
@@ -233,7 +232,6 @@
               <button onclick="openTool('video-resize')" class="mt-3 px-3.5 py-1.5 rounded-full bg-amber text-xs font-semibold text-white hover:opacity-90 transition">Launch Tool</button>
             </div>
           </div>
-          <p class="text-[11px] text-faint mt-4 leading-relaxed">Both tools use the browser's native <code>MediaRecorder</code> API and record in real time (a 30-second clip takes about 30 seconds to process). Works best in Chrome, Edge, and Firefox — Safari's support for this API is limited.</p>
         </div>
       </section>
 
@@ -243,7 +241,7 @@
           <h2 class="font-display font-bold text-lg text-ink">PDF Utility Tools</h2>
           <p class="text-dim text-sm mt-0.5 mb-4">Merge, split, and compress documents efficiently, entirely in-browser.</p>
           <div class="grid sm:grid-cols-2 gap-4">
-            <div class="p-4 rounded-2xl border border-brd bg-elev2 lift-card">
+            <div class="p-4 rounded-2xl border border-brd bg-elev2">
               <div class="w-10 h-10 rounded-xl bg-teal-soft flex items-center justify-center mb-3">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-teal"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/><path d="M11 7h6a2 2 0 0 1 2 2v4M13 17H7a2 2 0 0 1-2-2V9"/></svg>
               </div>
@@ -251,7 +249,7 @@
               <p class="text-xs text-dim mt-1">Combine multiple PDFs into one, or split a document into a page-per-file ZIP archive.</p>
               <button onclick="openTool('pdf-merge')" class="mt-3 px-3.5 py-1.5 rounded-full bg-teal text-xs font-semibold text-white hover:opacity-90 transition">Launch Tool</button>
             </div>
-            <div class="p-4 rounded-2xl border border-brd bg-elev2 lift-card">
+            <div class="p-4 rounded-2xl border border-brd bg-elev2">
               <div class="w-10 h-10 rounded-xl bg-teal-soft flex items-center justify-center mb-3">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-teal"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/><path d="M9 13.5c1.5-1 3.5-1 5 0M9 16.5c1-.6 2-.6 3 0"/></svg>
               </div>
@@ -267,7 +265,7 @@
   </div>
 </div>
 
-<!-- CALCULATOR MODAL CONTAINER -->
+<!-- MODALS -->
 <div id="calc-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-ink/40 backdrop-blur-sm p-4">
   <div class="bg-elev border border-brd rounded-2xl max-w-lg w-full p-6 relative shadow-2xl">
     <button onclick="closeCalculator()" class="absolute top-4 right-4 text-dim hover:text-ink text-sm font-mono bg-elev3 px-2.5 py-1 rounded-full">✕ Close</button>
@@ -275,7 +273,6 @@
   </div>
 </div>
 
-<!-- GENERIC TOOL MODAL CONTAINER (Photo / Video / PDF tools) -->
 <div id="tool-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-ink/40 backdrop-blur-sm p-4">
   <div class="bg-elev border border-brd rounded-2xl max-w-xl w-full max-h-[92vh] overflow-y-auto p-6 relative shadow-2xl">
     <button onclick="closeTool()" class="absolute top-4 right-4 text-dim hover:text-ink text-sm font-mono bg-elev3 px-2.5 py-1 rounded-full">✕ Close</button>
@@ -283,7 +280,6 @@
   </div>
 </div>
 
-<!-- INSIGHT ARTICLE MODAL CONTAINER -->
 <div id="insight-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-ink/40 backdrop-blur-sm p-4">
   <div class="bg-elev border border-brd rounded-2xl max-w-xl w-full max-h-[85vh] overflow-y-auto p-6 relative shadow-2xl">
     <button onclick="closeInsight()" class="absolute top-4 right-4 text-dim hover:text-ink text-sm font-mono bg-elev3 px-2.5 py-1 rounded-full">✕ Close</button>
@@ -291,13 +287,41 @@
   </div>
 </div>
 
-<!-- TOAST CONTAINER -->
-<div id="toast-container" class="fixed bottom-4 right-4 z-[60] flex flex-col gap-2 items-end"></div>
+<!-- INFO MODAL (About & Contact) -->
+<div id="info-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-ink/40 backdrop-blur-sm p-4">
+  <div class="bg-elev border border-brd rounded-2xl max-w-md w-full p-6 relative shadow-2xl">
+    <button onclick="closeInfoModal()" class="absolute top-4 right-4 text-dim hover:text-ink text-sm font-mono bg-elev3 px-2.5 py-1 rounded-full">✕ Close</button>
+    <div id="info-modal-content"></div>
+  </div>
+</div>
 
-<!-- ===== Third-party libraries (all run locally in the browser; no data leaves the client) ===== -->
+<script>
+  function openInfoModal(type) {
+    const modal = document.getElementById('info-modal');
+    const content = document.getElementById('info-modal-content');
+    if (type === 'about') {
+      content.innerHTML = `
+        <h3 class="font-display font-bold text-lg mb-2 text-ink">About Us</h3>
+        <p class="text-sm text-dim leading-relaxed">All-in-One Creator is your complete hub for secure, browser-based media utilities and creator revenue calculators. All processing runs 100% client-side to ensure your files and private data never leave your device.</p>
+      `;
+    } else {
+      content.innerHTML = `
+        <h3 class="font-display font-bold text-lg mb-2 text-ink">Contact Us</h3>
+        <p class="text-sm text-dim leading-relaxed">Have questions, feedback, or suggestions? Reach out to us directly through our developer community or repository updates.</p>
+      `;
+    }
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+  function closeInfoModal() {
+    const modal = document.getElementById('info-modal');
+    modal.classList.remove('flex');
+    modal.classList.add('hidden');
+  }
+</script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
 <script src="script.js"></script>
 </body>
 </html>
