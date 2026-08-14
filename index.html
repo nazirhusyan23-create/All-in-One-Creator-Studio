@@ -88,7 +88,7 @@
 <style>
   .panel { display: none; }
   .panel.active { display: flex; }
-  .nav-item { opacity: 0.75; cursor: pointer; }
+  .nav-item { opacity: 0.75; cursor: pointer; text-decoration: none; }
   .nav-item.active { opacity: 1; background: #4F46E5; color: #FFFFFF; box-shadow: 0 1px 2px rgba(79,70,229,0.25); }
 </style>
 </head>
@@ -112,8 +112,8 @@
       <button data-cat="photo" class="nav-item shrink-0 px-3.5 py-2 rounded-full text-sm font-semibold text-dim hover:text-ink hover:bg-elev3 transition-colors">Photo Tools</button>
       <button data-cat="video" class="nav-item shrink-0 px-3.5 py-2 rounded-full text-sm font-semibold text-dim hover:text-ink hover:bg-elev3 transition-colors">Video Tools</button>
       <button data-cat="pdf" class="nav-item shrink-0 px-3.5 py-2 rounded-full text-sm font-semibold text-dim hover:text-ink hover:bg-elev3 transition-colors">PDF Tools</button>
-      <button onclick="openInfoModal('about')" class="nav-item shrink-0 px-3.5 py-2 rounded-full text-sm font-semibold text-dim hover:text-ink hover:bg-elev3 transition-colors">About Us</button>
-      <button onclick="openInfoModal('contact')" class="nav-item shrink-0 px-3.5 py-2 rounded-full text-sm font-semibold text-dim hover:text-ink hover:bg-elev3 transition-colors">Contact Us</button>
+      <a href="about.html" class="nav-item shrink-0 px-3.5 py-2 rounded-full text-sm font-semibold text-dim hover:text-ink hover:bg-elev3 transition-colors inline-block text-center">About Us</a>
+      <a href="contact.html" class="nav-item shrink-0 px-3.5 py-2 rounded-full text-sm font-semibold text-dim hover:text-ink hover:bg-elev3 transition-colors inline-block text-center">Contact Us</a>
     </nav>
 
     <div class="hidden md:flex items-center gap-1.5 text-[11px] font-mono text-teal bg-teal-soft px-2.5 py-1.5 rounded-full border border-teal/20 shrink-0">
@@ -286,39 +286,6 @@
     <div id="insight-modal-content"></div>
   </div>
 </div>
-
-<!-- INFO MODAL (About & Contact) -->
-<div id="info-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-ink/40 backdrop-blur-sm p-4">
-  <div class="bg-elev border border-brd rounded-2xl max-w-md w-full p-6 relative shadow-2xl">
-    <button onclick="closeInfoModal()" class="absolute top-4 right-4 text-dim hover:text-ink text-sm font-mono bg-elev3 px-2.5 py-1 rounded-full">✕ Close</button>
-    <div id="info-modal-content"></div>
-  </div>
-</div>
-
-<script>
-  function openInfoModal(type) {
-    const modal = document.getElementById('info-modal');
-    const content = document.getElementById('info-modal-content');
-    if (type === 'about') {
-      content.innerHTML = `
-        <h3 class="font-display font-bold text-lg mb-2 text-ink">About Us</h3>
-        <p class="text-sm text-dim leading-relaxed">All-in-One Creator is your complete hub for secure, browser-based media utilities and creator revenue calculators. All processing runs 100% client-side to ensure your files and private data never leave your device.</p>
-      `;
-    } else {
-      content.innerHTML = `
-        <h3 class="font-display font-bold text-lg mb-2 text-ink">Contact Us</h3>
-        <p class="text-sm text-dim leading-relaxed">Have questions, feedback, or suggestions? Reach out to us directly through our developer community or repository updates.</p>
-      `;
-    }
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-  }
-  function closeInfoModal() {
-    const modal = document.getElementById('info-modal');
-    modal.classList.remove('flex');
-    modal.classList.add('hidden');
-  }
-</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
