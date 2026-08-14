@@ -2,23 +2,29 @@
    All-in-One Creator — app logic
    Sections: navigation, calculators, toast system, tool modal
    shell, and the Photo / Video / PDF tool implementations.
-   All processing happens locally in the browser.
+   Everything runs locally in the browser using native Canvas,
+   MediaRecorder, and File APIs — no external AI/FFmpeg workers.
    ============================================================ */
 
-document.addEventListener('DOMContentLoaded', () => {
-  const navItems = document.querySelectorAll('#sidebar-nav button, #mobile-nav button');
+/* ============================================================
+   Navigation — switchTab is defined at the top level (not inside
+   a closure) so it is globally available and never undefined.
+   ============================================================ */
+
+function switchTab(cat) {
+  const navItems = document.querySelectorAll('#top-nav button');
   const panels = document.querySelectorAll('.panel');
+  navItems.forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.cat === cat);
+  });
+  panels.forEach(panel => {
+    panel.classList.toggle('active', panel.id === 'panel-' + cat);
+  });
+}
+window.switchTab = switchTab;
 
-  function switchTab(cat) {
-    navItems.forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.cat === cat);
-    });
-    panels.forEach(panel => {
-      panel.classList.toggle('active', panel.id === 'panel-' + cat);
-    });
-  }
-
-  navItems.forEach(item => {
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('#top-nav button').forEach(item => {
     item.addEventListener('click', () => {
       const cat = item.dataset.cat;
       if (cat) switchTab(cat);
@@ -28,13 +34,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const calcGrid = document.getElementById('calc-grid');
   if (calcGrid) {
     calcGrid.innerHTML = calculators.map((calc, i) => `
-      <div class="rounded-xl border border-brd bg-elev2 p-4 flex flex-col justify-between hover:border-violet/40 transition">
+      <div class="rounded-2xl border border-brd bg-elev2 p-4 flex flex-col justify-between lift-card">
         <div>
           <span class="text-[10px] font-mono text-faint uppercase">Calculator 0${i + 1}</span>
           <h4 class="font-display font-semibold text-sm text-ink mt-1">${escapeHTML(calc.title)}</h4>
           <p class="text-xs text-dim mt-1 leading-relaxed">${escapeHTML(calc.desc)}</p>
         </div>
-        <button onclick="openCalculator(${calc.id})" class="mt-4 py-1.5 px-3 rounded-lg bg-elev3 border border-brd text-xs font-medium text-ink hover:border-violet/50 transition self-start">Open Calculator</button>
+        <button onclick="openCalculator(${calc.id})" class="mt-4 py-1.5 px-3 rounded-full bg-elev3 border border-brd text-xs font-semibold text-ink hover:border-primary/50 hover:text-primary transition self-start">Open Calculator</button>
       </div>
     `).join('');
   }
@@ -76,11 +82,11 @@ function showToast(message, type) {
   const colors = {
     success: 'border-teal/40 text-teal',
     error: 'border-danger/40 text-danger',
-    info: 'border-violet/40 text-violet'
+    info: 'border-primary/40 text-primary'
   };
   const cls = colors[type] || colors.info;
   const el = document.createElement('div');
-  el.className = `toast toast-enter flex items-center gap-2 px-3.5 py-2.5 rounded-lg bg-elev2 border ${cls} text-xs font-medium shadow-lg max-w-xs`;
+  el.className = `toast toast-enter flex items-center gap-2 px-3.5 py-2.5 rounded-lg bg-elev border ${cls} text-xs font-medium shadow-lg max-w-xs`;
   el.textContent = message;
   container.appendChild(el);
   requestAnimationFrame(() => el.classList.remove('toast-enter'));
@@ -118,7 +124,7 @@ function openCalculator(id) {
   const fieldsHTML = calc.fields.map((field, idx) => `
     <div class="mb-3">
       <label class="block text-xs font-mono text-dim mb-1">${escapeHTML(field)}</label>
-      <input type="number" id="calc-input-${idx}" value="1000" class="w-full bg-elev3 border border-brd rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:border-violet">
+      <input type="number" id="calc-input-${idx}" value="1000" class="w-full bg-elev3 border border-brd rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:border-primary">
     </div>
   `).join('');
 
@@ -126,7 +132,7 @@ function openCalculator(id) {
     <h3 class="font-display font-semibold text-lg text-ink mb-1">${escapeHTML(calc.title)}</h3>
     <p class="text-xs text-dim mb-4">${escapeHTML(calc.desc)}</p>
     <div class="space-y-3 mb-5">${fieldsHTML}</div>
-    <button onclick="calculateResult(${calc.id})" class="w-full py-2.5 rounded-lg bg-violet text-sm font-semibold text-base hover:opacity-90 transition">Calculate Results</button>
+    <button onclick="calculateResult(${calc.id})" class="w-full py-2.5 rounded-full bg-primary text-sm font-semibold text-white hover:opacity-90 transition">Calculate Results</button>
     <div id="calc-result" class="mt-4 p-3 rounded-lg bg-elev3 border border-brd text-sm font-mono text-teal text-center hidden"></div>
   `;
   modal.classList.remove('hidden');
@@ -183,6 +189,7 @@ function openTool(id) {
   modal.classList.remove('hidden');
   modal.classList.add('flex');
 }
+window.openTool = openTool;
 
 function closeTool() {
   const modal = document.getElementById('tool-modal');
@@ -190,6 +197,7 @@ function closeTool() {
   modal.classList.remove('flex');
   document.getElementById('tool-modal-content').innerHTML = '';
 }
+window.closeTool = closeTool;
 
 /** Wires a dropzone element to accept file(s) via click or drag & drop. */
 function wireDropzone(zoneEl, inputEl, onFiles) {
@@ -211,78 +219,178 @@ function wireDropzone(zoneEl, inputEl, onFiles) {
 
 function dropzoneMarkup(accentClass, label, sublabel) {
   return `
-    <div class="dropzone rounded-xl border-2 border-dashed border-brd hover:${accentClass} p-8 flex flex-col items-center justify-center text-center gap-1" data-role="dropzone">
+    <div class="dropzone rounded-2xl border-2 border-dashed border-brd hover:${accentClass} bg-elev3/60 p-8 flex flex-col items-center justify-center text-center gap-1" data-role="dropzone">
       <svg class="w-7 h-7 text-dim mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
-      <p class="text-sm font-medium text-ink">${label}</p>
+      <p class="text-sm font-semibold text-ink">${label}</p>
       <p class="text-xs text-faint">${sublabel}</p>
     </div>
   `;
 }
 
 /* ============================================================
-   PHOTO TOOL 1 — AI Background Remover
-   Uses @imgly/background-removal: a real segmentation model
-   (ONNX + WASM) that runs entirely client-side.
+   PHOTO TOOL 1 — Background Eraser
+   100% native: draws the image to a Canvas, then flood-fills
+   from the image border, removing pixels that are within a
+   color-distance tolerance of the sampled edge/background color
+   and setting their alpha to 0. No AI model, no external CDN —
+   works well on flat or gradient studio backgrounds.
    ============================================================ */
 
 function renderBgRemoverTool(root) {
   root.innerHTML = `
-    <h3 class="font-display font-semibold text-lg text-ink mb-1">AI Background Remover</h3>
-    <p class="text-xs text-dim mb-4">Runs a real segmentation model locally in your browser. The first run downloads the model (a few MB) and caches it.</p>
+    <h3 class="font-display font-semibold text-lg text-ink mb-1">Background Eraser</h3>
+    <p class="text-xs text-dim mb-4">Runs a border flood-fill directly on a Canvas in your browser — best for photos with a flat or gradient background (product shots, portraits on a plain backdrop). It won't segment complex scenes the way a full AI model would.</p>
     <div id="bg-drop-wrap">${dropzoneMarkup('border-violet', 'Upload or drag & drop an image', 'PNG or JPG, up to ~15MB')}</div>
     <input type="file" accept="image/png,image/jpeg,image/webp" class="hidden" id="bg-file-input">
+
+    <div id="bg-controls" class="mt-4 hidden space-y-3">
+      <div>
+        <div class="flex justify-between text-xs mb-1"><span class="text-dim">Tolerance</span><span class="text-ink font-mono" id="bg-tol-val">32</span></div>
+        <input type="range" min="4" max="90" value="32" class="w-full accent-violet" id="bg-tolerance">
+        <p class="text-[11px] text-faint mt-1">Higher tolerance removes more of the background but can eat into the subject on busy edges.</p>
+      </div>
+      <button id="bg-run-btn" class="w-full py-2.5 rounded-full bg-violet text-sm font-semibold text-white hover:opacity-90 transition">Erase Background</button>
+    </div>
+
     <div id="bg-status" class="mt-4 hidden">
-      <div class="flex items-center gap-2 text-xs text-dim mb-2"><span class="spinner"></span><span id="bg-status-text">Loading model…</span></div>
-      <div class="progress-track"><div class="progress-fill bg-violet" id="bg-progress" style="width:8%"></div></div>
+      <div class="flex items-center gap-2 text-xs text-dim mb-2"><span class="spinner"></span><span id="bg-status-text">Processing…</span></div>
+      <div class="progress-track"><div class="progress-fill bg-violet scan-bar" style="width:100%"></div></div>
     </div>
     <div id="bg-result" class="mt-4 hidden">
       <div class="checker rounded-xl p-2 flex items-center justify-center">
         <img id="bg-result-img" class="max-h-64 rounded-lg" alt="Background removed preview">
       </div>
-      <button id="bg-download-btn" class="mt-3 w-full py-2.5 rounded-lg bg-violet text-sm font-semibold text-white hover:opacity-90 transition">Download PNG</button>
+      <button id="bg-download-btn" class="mt-3 w-full py-2.5 rounded-full bg-violet text-sm font-semibold text-white hover:opacity-90 transition">Download PNG</button>
     </div>
   `;
 
   const dropWrap = root.querySelector('#bg-drop-wrap');
   const zone = dropWrap.querySelector('[data-role="dropzone"]');
   const input = root.querySelector('#bg-file-input');
+  const controls = root.querySelector('#bg-controls');
+  const tolerance = root.querySelector('#bg-tolerance');
+  const tolVal = root.querySelector('#bg-tol-val');
+  const runBtn = root.querySelector('#bg-run-btn');
+  const statusWrap = root.querySelector('#bg-status');
+  const statusText = root.querySelector('#bg-status-text');
+  const resultWrap = root.querySelector('#bg-result');
 
-  wireDropzone(zone, input, async (files) => {
+  let currentFile = null;
+  tolerance.addEventListener('input', () => tolVal.textContent = tolerance.value);
+
+  wireDropzone(zone, input, (files) => {
     const file = files[0];
     if (!file || !file.type.startsWith('image/')) {
       showToast('Please choose an image file.', 'error');
       return;
     }
-    const statusWrap = root.querySelector('#bg-status');
-    const statusText = root.querySelector('#bg-status-text');
-    const progressBar = root.querySelector('#bg-progress');
-    const resultWrap = root.querySelector('#bg-result');
+    currentFile = file;
     resultWrap.classList.add('hidden');
-    statusWrap.classList.remove('hidden');
-    statusText.textContent = 'Loading AI model…';
-    progressBar.style.width = '10%';
+    controls.classList.remove('hidden');
+  });
 
+  runBtn.addEventListener('click', async () => {
+    if (!currentFile) return;
+    runBtn.disabled = true;
+    statusWrap.classList.remove('hidden');
+    statusText.textContent = 'Reading pixels…';
     try {
-      const mod = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal/dist/browser.mjs');
-      const blob = await mod.removeBackground(file, {
-        progress: (key, current, total) => {
-          const pct = total ? Math.round((current / total) * 100) : 0;
-          statusText.textContent = `Processing (${key}): ${pct}%`;
-          progressBar.style.width = Math.max(10, pct) + '%';
-        }
+      const blob = await eraseBackgroundCanvas(currentFile, parseInt(tolerance.value, 10), (msg) => {
+        statusText.textContent = msg;
       });
-      progressBar.style.width = '100%';
       const url = URL.createObjectURL(blob);
       root.querySelector('#bg-result-img').src = url;
       resultWrap.classList.remove('hidden');
-      statusWrap.classList.add('hidden');
-      root.querySelector('#bg-download-btn').onclick = () => downloadBlob(blob, 'background-removed.png');
-      showToast('Background removed.', 'success');
+      root.querySelector('#bg-download-btn').onclick = () => downloadBlob(blob, currentFile.name.replace(/\.[^.]+$/, '') + '-erased.png');
+      showToast('Background erased.', 'success');
     } catch (err) {
       console.error(err);
-      statusWrap.classList.add('hidden');
       showToast('Could not process that image: ' + (err && err.message ? err.message : 'unknown error'), 'error');
+    } finally {
+      statusWrap.classList.add('hidden');
+      runBtn.disabled = false;
     }
+  });
+}
+
+/**
+ * Loads `file` into a Canvas, then BFS-floods inward from every border
+ * pixel, clearing (alpha = 0) any pixel whose color is within
+ * `tolerance` of the running local reference color. Runs fully
+ * client-side with typed arrays — no network calls.
+ */
+function eraseBackgroundCanvas(file, tolerance, onStatus) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        // Cap working resolution for performance on very large photos.
+        const MAX_DIM = 2200;
+        let w = img.width, h = img.height;
+        const scale = Math.min(1, MAX_DIM / Math.max(w, h));
+        w = Math.max(1, Math.round(w * scale));
+        h = Math.max(1, Math.round(h * scale));
+
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        ctx.drawImage(img, 0, 0, w, h);
+        const imageData = ctx.getImageData(0, 0, w, h);
+        const data = imageData.data;
+
+        if (onStatus) onStatus('Flood-filling background…');
+
+        const visited = new Uint8Array(w * h);
+        const stackX = new Int32Array(w * h);
+        const stackY = new Int32Array(w * h);
+        let sp = 0;
+
+        const pushSeed = (x, y) => {
+          const i = y * w + x;
+          if (!visited[i]) { visited[i] = 2; stackX[sp] = x; stackY[sp] = y; sp++; }
+        };
+        for (let x = 0; x < w; x++) { pushSeed(x, 0); pushSeed(x, h - 1); }
+        for (let y = 0; y < h; y++) { pushSeed(0, y); pushSeed(w - 1, y); }
+
+        const tolSq = tolerance * tolerance * 3;
+
+        while (sp > 0) {
+          sp--;
+          const x = stackX[sp], y = stackY[sp];
+          const i = y * w + x;
+          const p = i * 4;
+          const r = data[p], g = data[p + 1], b = data[p + 2];
+
+          // Clear this pixel's alpha — it matched the flood.
+          data[p + 3] = 0;
+          visited[i] = 1;
+
+          const neighbors = [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]];
+          for (const [nx, ny] of neighbors) {
+            if (nx < 0 || nx >= w || ny < 0 || ny >= h) continue;
+            const ni = ny * w + nx;
+            if (visited[ni]) continue;
+            const np = ni * 4;
+            const dr = data[np] - r, dg = data[np + 1] - g, db = data[np + 2] - b;
+            if (dr * dr + dg * dg + db * db <= tolSq) {
+              visited[ni] = 2;
+              stackX[sp] = nx; stackY[sp] = ny; sp++;
+            }
+          }
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+        if (onStatus) onStatus('Encoding PNG…');
+        canvas.toBlob(blob => {
+          URL.revokeObjectURL(img.src);
+          if (blob) resolve(blob); else reject(new Error('Canvas encoding failed'));
+        }, 'image/png');
+      } catch (err) {
+        reject(err);
+      }
+    };
+    img.onerror = () => reject(new Error('Could not load image'));
+    img.src = URL.createObjectURL(file);
   });
 }
 
@@ -317,7 +425,7 @@ function renderImgCompressorTool(root) {
         </select>
       </div>
       <div id="ic-file-list" class="tool-thumb-list space-y-1.5 text-xs"></div>
-      <button id="ic-run-btn" class="w-full py-2.5 rounded-lg bg-violet text-sm font-semibold text-white hover:opacity-90 transition">Compress Images</button>
+      <button id="ic-run-btn" class="w-full py-2.5 rounded-full bg-violet text-sm font-semibold text-white hover:opacity-90 transition">Compress Images</button>
     </div>
   `;
 
@@ -401,28 +509,8 @@ function compressImageFile(file, quality, maxWidth, format) {
 }
 
 /* ============================================================
-   FFmpeg.wasm loader shared by both video tools
+   Shared helpers for the native video tools
    ============================================================ */
-
-let ffmpegSingleton = null;
-
-async function loadFfmpeg(onStatus) {
-  if (ffmpegSingleton) return ffmpegSingleton;
-  if (!window.FFmpegWASM || !window.FFmpegUtil) {
-    throw new Error('FFmpeg engine failed to load from CDN. Check your connection and try again.');
-  }
-  const { FFmpeg } = window.FFmpegWASM;
-  const { toBlobURL } = window.FFmpegUtil;
-  const ffmpeg = new FFmpeg();
-  ffmpeg.on('log', ({ message }) => { if (onStatus) onStatus(message); });
-  const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
-  await ffmpeg.load({
-    coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-    wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm')
-  });
-  ffmpegSingleton = ffmpeg;
-  return ffmpeg;
-}
 
 function parseTimeToSeconds(str) {
   const parts = String(str).split(':').map(Number);
@@ -438,19 +526,36 @@ function secondsToTime(sec) {
   return `${m}:${String(s).padStart(2, '0')}`;
 }
 
+function pickSupportedMime() {
+  const candidates = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
+  for (const c of candidates) {
+    if (window.MediaRecorder && MediaRecorder.isTypeSupported(c)) return c;
+  }
+  return '';
+}
+
+function assertRecordingSupported() {
+  if (!window.MediaRecorder) {
+    throw new Error('This browser does not support MediaRecorder. Try Chrome, Edge, or Firefox.');
+  }
+}
+
 /* ============================================================
    VIDEO TOOL 1 — Video Trimmer
+   100% native: seeks an offscreen <video> element to the start
+   time, then records its captureStream() with MediaRecorder
+   until the end time is reached. No WASM, no CDN worker.
    ============================================================ */
 
 function renderVideoTrimTool(root) {
   root.innerHTML = `
     <h3 class="font-display font-semibold text-lg text-ink mb-1">Video Trimmer</h3>
-    <p class="text-xs text-dim mb-4">Powered by a real FFmpeg build compiled to WebAssembly, running entirely in your browser.</p>
+    <p class="text-xs text-dim mb-4">Uses your browser's native playback + MediaRecorder APIs — everything happens on your device. Recording runs in real time, so a 20-second clip takes about 20 seconds. Output is a .webm file.</p>
     <div id="vt-drop-wrap">${dropzoneMarkup('border-amber', 'Upload or drag & drop a video', 'MP4, MOV, or WebM')}</div>
     <input type="file" accept="video/*" class="hidden" id="vt-file-input">
 
     <div id="vt-controls" class="mt-4 hidden space-y-4">
-      <video id="vt-preview" class="w-full rounded-lg bg-black" controls></video>
+      <video id="vt-preview" class="w-full rounded-lg bg-ink" controls></video>
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="block text-xs text-dim mb-1">Start (mm:ss)</label>
@@ -461,10 +566,10 @@ function renderVideoTrimTool(root) {
           <input type="text" id="vt-end" value="0:10" class="w-full bg-elev3 border border-brd rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:border-amber">
         </div>
       </div>
-      <button id="vt-run-btn" class="w-full py-2.5 rounded-lg bg-amber text-sm font-semibold text-base hover:opacity-90 transition">Trim Video</button>
+      <button id="vt-run-btn" class="w-full py-2.5 rounded-full bg-amber text-sm font-semibold text-white hover:opacity-90 transition">Trim Video</button>
       <div id="vt-status" class="hidden">
-        <div class="flex items-center gap-2 text-xs text-dim mb-2"><span class="spinner"></span><span id="vt-status-text">Loading engine…</span></div>
-        <div class="progress-track"><div class="progress-fill bg-amber scan-bar" style="width:100%"></div></div>
+        <div class="flex items-center gap-2 text-xs text-dim mb-2"><span class="spinner"></span><span id="vt-status-text">Recording…</span></div>
+        <div class="progress-track"><div class="progress-fill bg-amber" id="vt-progress" style="width:0%"></div></div>
       </div>
     </div>
   `;
@@ -494,48 +599,118 @@ function renderVideoTrimTool(root) {
     const btn = root.querySelector('#vt-run-btn');
     const statusWrap = root.querySelector('#vt-status');
     const statusText = root.querySelector('#vt-status-text');
+    const progressBar = root.querySelector('#vt-progress');
     btn.disabled = true;
     statusWrap.classList.remove('hidden');
-    statusText.textContent = 'Loading engine (first run only)…';
+    statusText.textContent = 'Preparing…';
 
     try {
-      const ffmpeg = await loadFfmpeg(msg => { statusText.textContent = msg.slice(0, 90); });
-      statusText.textContent = 'Trimming…';
-      const { fetchFile } = window.FFmpegUtil;
-      const inName = 'input' + (currentFile.name.match(/\.[^.]+$/) || ['.mp4'])[0];
-      await ffmpeg.writeFile(inName, await fetchFile(currentFile));
-      await ffmpeg.exec(['-i', inName, '-ss', String(start), '-to', String(end), '-c', 'copy', 'output.mp4']);
-      const data = await ffmpeg.readFile('output.mp4');
-      const blob = new Blob([data.buffer], { type: 'video/mp4' });
-      downloadBlob(blob, 'trimmed-video.mp4');
+      assertRecordingSupported();
+      const blob = await trimVideoNative(currentFile, start, end, (cur, total) => {
+        const pct = total ? Math.min(100, Math.round(((cur - start) / (total - start)) * 100)) : 0;
+        progressBar.style.width = pct + '%';
+        statusText.textContent = `Recording… ${pct}%`;
+      });
+      downloadBlob(blob, currentFile.name.replace(/\.[^.]+$/, '') + '-trimmed.webm');
       showToast('Video trimmed and downloaded.', 'success');
     } catch (err) {
       console.error(err);
-      showToast('Trim failed: ' + (err && err.message ? err.message : 'unknown error') + '. Some codecs need a re-encode — try a shorter clip or a standard MP4/H.264 source.', 'error');
+      showToast('Trim failed: ' + (err && err.message ? err.message : 'unknown error'), 'error');
     } finally {
       btn.disabled = false;
       statusWrap.classList.add('hidden');
+      progressBar.style.width = '0%';
     }
+  });
+}
+
+/**
+ * Seeks a hidden <video> to `start`, then records its captureStream()
+ * with MediaRecorder until playback reaches `end`. Resolves with a
+ * WebM Blob. Entirely native — no external workers.
+ */
+function trimVideoNative(file, start, end, onProgress) {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement('video');
+    video.muted = false;
+    video.playsInline = true;
+    video.src = URL.createObjectURL(file);
+
+    const cleanup = () => URL.revokeObjectURL(video.src);
+
+    video.addEventListener('error', () => { cleanup(); reject(new Error('Could not load that video file.')); });
+
+    video.addEventListener('loadedmetadata', () => {
+      if (start >= video.duration) { cleanup(); reject(new Error('Start time is beyond the video duration.')); return; }
+      video.currentTime = start;
+    });
+
+    video.addEventListener('seeked', function onSeeked() {
+      video.removeEventListener('seeked', onSeeked);
+
+      let stream;
+      try {
+        stream = video.captureStream ? video.captureStream() : video.mozCaptureStream();
+      } catch (e) {
+        cleanup();
+        reject(new Error('This browser does not support captureStream().'));
+        return;
+      }
+
+      const mimeType = pickSupportedMime();
+      let recorder;
+      try {
+        recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+      } catch (e) {
+        cleanup();
+        reject(new Error('Could not start the recorder for this video format.'));
+        return;
+      }
+
+      const chunks = [];
+      recorder.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+      recorder.onstop = () => { cleanup(); resolve(new Blob(chunks, { type: mimeType || 'video/webm' })); };
+      recorder.onerror = e => { cleanup(); reject(e.error || new Error('Recording failed')); };
+
+      const clampedEnd = Math.min(end, video.duration);
+      recorder.start();
+      video.play().catch(() => { /* some browsers require user gesture; button click satisfies this */ });
+
+      const tick = () => {
+        if (video.paused && video.currentTime === 0) return;
+        if (video.currentTime >= clampedEnd || video.ended) {
+          video.pause();
+          if (recorder.state !== 'inactive') recorder.stop();
+          return;
+        }
+        if (onProgress) onProgress(video.currentTime, clampedEnd);
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
   });
 }
 
 /* ============================================================
    VIDEO TOOL 2 — Resolution Resizer (crop + scale to 9:16)
+   100% native: redraws each video frame onto a 1080×1920 Canvas
+   (center-cropped), then records canvas.captureStream() combined
+   with the source audio track via MediaRecorder.
    ============================================================ */
 
 function renderVideoResizeTool(root) {
   root.innerHTML = `
     <h3 class="font-display font-semibold text-lg text-ink mb-1">Resolution Resizer</h3>
-    <p class="text-xs text-dim mb-4">Center-crops and scales your clip to a vertical 9:16 frame (1080×1920), ready for Shorts/Reels.</p>
+    <p class="text-xs text-dim mb-4">Center-crops and redraws your clip frame-by-frame onto a vertical 9:16 canvas (1080×1920), ready for Shorts/Reels. Recording runs in real time and exports a .webm file.</p>
     <div id="vr-drop-wrap">${dropzoneMarkup('border-amber', 'Upload or drag & drop a video', 'MP4, MOV, or WebM')}</div>
     <input type="file" accept="video/*" class="hidden" id="vr-file-input">
 
     <div id="vr-controls" class="mt-4 hidden space-y-4">
-      <video id="vr-preview" class="w-full rounded-lg bg-black" controls></video>
-      <button id="vr-run-btn" class="w-full py-2.5 rounded-lg bg-amber text-sm font-semibold text-base hover:opacity-90 transition">Convert to 9:16</button>
+      <video id="vr-preview" class="w-full rounded-lg bg-ink" controls muted></video>
+      <button id="vr-run-btn" class="w-full py-2.5 rounded-full bg-amber text-sm font-semibold text-white hover:opacity-90 transition">Convert to 9:16</button>
       <div id="vr-status" class="hidden">
-        <div class="flex items-center gap-2 text-xs text-dim mb-2"><span class="spinner"></span><span id="vr-status-text">Loading engine…</span></div>
-        <div class="progress-track"><div class="progress-fill bg-amber scan-bar" style="width:100%"></div></div>
+        <div class="flex items-center gap-2 text-xs text-dim mb-2"><span class="spinner"></span><span id="vr-status-text">Recording…</span></div>
+        <div class="progress-track"><div class="progress-fill bg-amber" id="vr-progress" style="width:0%"></div></div>
       </div>
     </div>
   `;
@@ -557,20 +732,19 @@ function renderVideoResizeTool(root) {
     const btn = root.querySelector('#vr-run-btn');
     const statusWrap = root.querySelector('#vr-status');
     const statusText = root.querySelector('#vr-status-text');
+    const progressBar = root.querySelector('#vr-progress');
     btn.disabled = true;
     statusWrap.classList.remove('hidden');
-    statusText.textContent = 'Loading engine (first run only)…';
+    statusText.textContent = 'Preparing…';
 
     try {
-      const ffmpeg = await loadFfmpeg(msg => { statusText.textContent = msg.slice(0, 90); });
-      statusText.textContent = 'Converting to vertical 9:16…';
-      const { fetchFile } = window.FFmpegUtil;
-      const inName = 'input' + (currentFile.name.match(/\.[^.]+$/) || ['.mp4'])[0];
-      await ffmpeg.writeFile(inName, await fetchFile(currentFile));
-      await ffmpeg.exec(['-i', inName, '-vf', "crop=ih*9/16:ih,scale=1080:1920", '-c:a', 'copy', 'output.mp4']);
-      const data = await ffmpeg.readFile('output.mp4');
-      const blob = new Blob([data.buffer], { type: 'video/mp4' });
-      downloadBlob(blob, 'vertical-video.mp4');
+      assertRecordingSupported();
+      const blob = await resizeVideoNative(currentFile, 1080, 1920, (cur, total) => {
+        const pct = total ? Math.min(100, Math.round((cur / total) * 100)) : 0;
+        progressBar.style.width = pct + '%';
+        statusText.textContent = `Recording… ${pct}%`;
+      });
+      downloadBlob(blob, currentFile.name.replace(/\.[^.]+$/, '') + '-vertical.webm');
       showToast('Converted and downloaded.', 'success');
     } catch (err) {
       console.error(err);
@@ -578,7 +752,93 @@ function renderVideoResizeTool(root) {
     } finally {
       btn.disabled = false;
       statusWrap.classList.add('hidden');
+      progressBar.style.width = '0%';
     }
+  });
+}
+
+/**
+ * Plays `file` in a hidden <video>, redraws each frame center-cropped
+ * onto a `targetW`x`targetH` canvas, and records the canvas stream
+ * (with the original audio track attached) via MediaRecorder.
+ */
+function resizeVideoNative(file, targetW, targetH, onProgress) {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement('video');
+    video.muted = true; // muted so autoplay isn't blocked; audio is still captured via the track below
+    video.playsInline = true;
+    video.src = URL.createObjectURL(file);
+
+    const cleanup = () => URL.revokeObjectURL(video.src);
+    video.addEventListener('error', () => { cleanup(); reject(new Error('Could not load that video file.')); });
+
+    video.addEventListener('loadedmetadata', () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = targetW; canvas.height = targetH;
+      const ctx = canvas.getContext('2d');
+
+      let sourceStream;
+      try {
+        sourceStream = video.captureStream ? video.captureStream() : video.mozCaptureStream();
+      } catch (e) {
+        cleanup();
+        reject(new Error('This browser does not support captureStream().'));
+        return;
+      }
+
+      let canvasStream;
+      try {
+        canvasStream = canvas.captureStream(30);
+      } catch (e) {
+        cleanup();
+        reject(new Error('This browser does not support canvas.captureStream().'));
+        return;
+      }
+      sourceStream.getAudioTracks().forEach(t => canvasStream.addTrack(t));
+
+      const mimeType = pickSupportedMime();
+      let recorder;
+      try {
+        recorder = mimeType ? new MediaRecorder(canvasStream, { mimeType }) : new MediaRecorder(canvasStream);
+      } catch (e) {
+        cleanup();
+        reject(new Error('Could not start the recorder for this video format.'));
+        return;
+      }
+
+      const chunks = [];
+      recorder.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+      recorder.onstop = () => { cleanup(); resolve(new Blob(chunks, { type: mimeType || 'video/webm' })); };
+      recorder.onerror = e => { cleanup(); reject(e.error || new Error('Recording failed')); };
+
+      let stopped = false;
+      const stopAll = () => {
+        if (stopped) return;
+        stopped = true;
+        video.pause();
+        if (recorder.state !== 'inactive') recorder.stop();
+      };
+
+      const drawFrame = () => {
+        if (stopped) return;
+        if (video.paused || video.ended) { stopAll(); return; }
+        const vw = video.videoWidth, vh = video.videoHeight;
+        const targetAspect = targetW / targetH;
+        let sw = vh * targetAspect, sh = vh, sx = (vw - sw) / 2, sy = 0;
+        if (sw > vw) { sw = vw; sh = vw / targetAspect; sx = 0; sy = (vh - sh) / 2; }
+        ctx.drawImage(video, sx, sy, sw, sh, 0, 0, targetW, targetH);
+        if (onProgress) onProgress(video.currentTime, video.duration);
+        requestAnimationFrame(drawFrame);
+      };
+
+      video.addEventListener('play', () => {
+        recorder.start();
+        drawFrame();
+      });
+      video.addEventListener('ended', stopAll);
+
+      video.play().catch(err => { cleanup(); reject(new Error('Playback could not start: ' + err.message)); });
+    });
   });
 }
 
@@ -600,14 +860,14 @@ function renderPdfMergeSplitTool(root) {
       <div id="pms-merge-drop">${dropzoneMarkup('border-teal', 'Upload or drag & drop PDFs', 'Select two or more files — order below is merge order')}</div>
       <input type="file" accept="application/pdf" multiple class="hidden" id="pms-merge-input">
       <div id="pms-merge-list" class="tool-thumb-list space-y-1.5 text-xs mt-3"></div>
-      <button id="pms-merge-btn" class="mt-3 w-full py-2.5 rounded-lg bg-teal text-sm font-semibold text-base hover:opacity-90 transition hidden">Merge PDFs</button>
+      <button id="pms-merge-btn" class="mt-3 w-full py-2.5 rounded-full bg-teal text-sm font-semibold text-white hover:opacity-90 transition hidden">Merge PDFs</button>
     </div>
 
     <div id="pms-split-panel" class="hidden">
       <div id="pms-split-drop">${dropzoneMarkup('border-teal', 'Upload or drag & drop a PDF', 'A ZIP with one PDF per page will be downloaded')}</div>
       <input type="file" accept="application/pdf" class="hidden" id="pms-split-input">
       <div id="pms-split-info" class="text-xs text-dim mt-3"></div>
-      <button id="pms-split-btn" class="mt-3 w-full py-2.5 rounded-lg bg-teal text-sm font-semibold text-base hover:opacity-90 transition hidden">Split into Pages (.zip)</button>
+      <button id="pms-split-btn" class="mt-3 w-full py-2.5 rounded-full bg-teal text-sm font-semibold text-white hover:opacity-90 transition hidden">Split into Pages (.zip)</button>
     </div>
   `;
 
@@ -747,7 +1007,7 @@ function renderPdfCompressTool(root) {
     <div id="pc-drop-wrap">${dropzoneMarkup('border-teal', 'Upload or drag & drop a PDF', 'Up to ~100MB')}</div>
     <input type="file" accept="application/pdf" class="hidden" id="pc-file-input">
     <div id="pc-info" class="text-xs text-dim mt-3 hidden"></div>
-    <button id="pc-run-btn" class="mt-3 w-full py-2.5 rounded-lg bg-teal text-sm font-semibold text-base hover:opacity-90 transition hidden">Compress PDF</button>
+    <button id="pc-run-btn" class="mt-3 w-full py-2.5 rounded-full bg-teal text-sm font-semibold text-white hover:opacity-90 transition hidden">Compress PDF</button>
     <div id="pc-result" class="mt-3 hidden text-xs text-teal font-mono"></div>
   `;
 
