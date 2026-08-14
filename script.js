@@ -44,6 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `).join('');
   }
+
+  renderInsightsGrid();
 });
 
 /* ============================================================
@@ -165,6 +167,136 @@ function calculateResult(id) {
   resDiv.innerText = resText;
   resDiv.classList.remove('hidden');
 }
+
+/* ============================================================
+   Creator Insights & Daily Guides (Home panel)
+   Structured, locally-defined article data — no network fetch,
+   no third-party embeds. Rendered as cards; each opens a short
+   read in a lightweight modal. Content is original and written
+   to be genuinely useful, not filler.
+   ============================================================ */
+
+const creatorInsights = [
+  {
+    id: 1,
+    tag: 'Growth', tagColor: 'primary',
+    title: 'Why Your First 3 Seconds Decide Everything',
+    readTime: '4 min read',
+    excerpt: 'Retention curves on short-form video almost always dip hardest in the opening seconds. Here\'s what actually keeps people watching past the hook.',
+    body: `Most creators spend hours polishing the middle of a video and thirty seconds on the opening line. That's backwards. Platforms weight early retention heavily when deciding who else to show your content to, so the first few seconds aren't just an intro — they're the algorithm's audition.
+
+A few things consistently work better than a slow build-up: naming the payoff before you explain how you got there, starting mid-action instead of mid-setup, and cutting any sentence that could be summarized as "hey guys, so today we're going to talk about." None of that is exciting to say, but it's exactly the kind of sentence a viewer's thumb is trained to scroll past.
+
+The fix isn't more energy — it's more specificity. "I fixed my sleep in a week" beats "let's talk about sleep tips" because it promises something concrete and finished, not a topic. Try writing your hook last, after you know what the video actually delivers.`
+  },
+  {
+    id: 2,
+    tag: 'Monetization', tagColor: 'teal',
+    title: 'Diversifying Beyond Ad Revenue',
+    readTime: '5 min read',
+    excerpt: 'Ad RPMs swing with the season and the news cycle. A look at which secondary income streams are worth setting up early, not as an afterthought.',
+    body: `Ad revenue is the easiest income stream to start and the least stable to depend on. RPMs move with advertiser demand, seasonality, and platform policy — none of which you control. That's not a reason to ignore it, but it is a reason to treat it as one leg of a table, not the whole table.
+
+Affiliate links tend to be the lowest-friction addition for creators who already recommend tools or products on camera; the key is disclosure and relevance, not volume. Digital products — templates, presets, short courses — take more upfront work but convert an audience that already trusts you into recurring income that doesn't depend on impressions.
+
+A useful gut check: if your primary platform changed its algorithm tomorrow and your views dropped by half, would your income drop by half too? If yes, that's the signal to build a second stream before you need one.`
+  },
+  {
+    id: 3,
+    tag: 'Workflow', tagColor: 'amber',
+    title: 'A Realistic Batch-Content Schedule',
+    readTime: '3 min read',
+    excerpt: 'Batching sounds efficient until it burns you out in one exhausting day. A lighter structure that spreads the same output across a week.',
+    body: `Batching gets recommended constantly, and it works — but most versions of the advice assume you can film eight pieces of content in one sitting without your energy or ideas flattening out by piece five. They usually do.
+
+A steadier structure splits batching by task instead of by finished piece: one day for scripting or outlining everything, one day for filming, one day for editing. Each session stays focused on a single kind of work, which is where most of the efficiency gain actually comes from — not from doing everything at once, but from not context-switching between writing and filming and editing in the same hour.
+
+If a week feels like too long a cycle, a two-week rhythm with the same three phases still beats fully reactive, film-the-day-you-post scheduling, and leaves buffer room for the pieces that don't come together on the first try.`
+  },
+  {
+    id: 4,
+    tag: 'Platform Strategy', tagColor: 'violet',
+    title: 'Repurposing Without Making It Obvious',
+    readTime: '4 min read',
+    excerpt: 'Cross-posting the same clip everywhere is common — and easy to spot. Small edits that make repurposed content feel native to each platform.',
+    body: `Audiences can tell when a video was made for a different platform and dropped into this one. The captions are in the wrong place, the pacing doesn't match how people scroll here, and the call-to-action references a feature that doesn't exist on this app. None of that is disqualifying on its own, but together it reads as an afterthought, and engagement tends to reflect that.
+
+The highest-value fix is usually the first and last three seconds, not the whole edit. Re-cutting the hook to match the platform's native pacing, and swapping the outro for a platform-appropriate call-to-action, gets most of the benefit for a fraction of the effort of a full re-edit.
+
+Captions and framing matter more than people expect too — a clip framed for a feed that shows captions by default needs different pacing than one where captions are optional, since viewers are reading as much as watching.`
+  },
+  {
+    id: 5,
+    tag: 'Tools', tagColor: 'teal',
+    title: 'What "Runs In Your Browser" Actually Buys You',
+    readTime: '3 min read',
+    excerpt: 'A quick, honest look at why client-side tools trade some raw power for privacy and speed — and when that trade is worth it.',
+    body: `Tools that process files directly in your browser — like the photo, video, and PDF utilities on this site — never upload your files anywhere. The trade-off is that they're bounded by what your device and your browser's APIs can do, so they won't match a dedicated desktop encoder on very large files or exotic formats.
+
+For most day-to-day creator tasks — trimming a clip, compressing a batch of thumbnails, merging a few PDFs — that trade-off is a good one. Nothing leaves your machine, there's no upload wait, and there's no account or subscription standing between you and the file you need. It's the right tool for quick, private, one-off jobs, and the wrong tool if you're encoding hour-long 4K footage professionally.
+
+Knowing which category a task falls into before you start is the real time-saver.`
+  },
+  {
+    id: 6,
+    tag: 'Growth', tagColor: 'primary',
+    title: 'Reading Your Analytics Without Overreacting',
+    readTime: '5 min read',
+    excerpt: 'One bad week of numbers doesn\'t mean your content strategy failed. How to tell a real trend from normal week-to-week noise.',
+    body: `A single underperforming post is data, not a verdict. Views and engagement naturally vary week to week for reasons that have nothing to do with content quality — a platform-wide algorithm tweak, a competing news cycle, even the day of the week you posted. Reacting to one data point by overhauling your whole approach usually just adds more noise to a system that already has plenty.
+
+A steadier approach looks at rolling averages instead of single posts — compare this month's average performance to last month's, not today's post to yesterday's. Real trends show up over three or four data points in the same direction, not one outlier.
+
+When a post genuinely underperforms across a sustained stretch, the more useful question isn't "what's wrong with me" but "what changed" — a new format, a shift in posting time, a topic that doesn't match what brought your audience in originally. Specific changes are fixable; vague dissatisfaction with the numbers isn't.`
+  }
+];
+
+function renderInsightsGrid() {
+  const grid = document.getElementById('insights-grid');
+  if (!grid) return;
+  const tagClasses = {
+    primary: 'bg-primary-soft text-primary',
+    violet: 'bg-violet-soft text-violet',
+    amber: 'bg-amber-soft text-amber',
+    teal: 'bg-teal-soft text-teal'
+  };
+  grid.innerHTML = creatorInsights.map(a => `
+    <div class="rounded-2xl border border-brd bg-elev2 p-4 flex flex-col justify-between lift-card">
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full ${tagClasses[a.tagColor] || tagClasses.primary}">${escapeHTML(a.tag)}</span>
+          <span class="text-[10px] text-faint font-mono">${escapeHTML(a.readTime)}</span>
+        </div>
+        <h4 class="font-display font-semibold text-sm text-ink leading-snug">${escapeHTML(a.title)}</h4>
+        <p class="text-xs text-dim mt-1.5 leading-relaxed">${escapeHTML(a.excerpt)}</p>
+      </div>
+      <button onclick="openInsight(${a.id})" class="mt-4 py-1.5 px-3 rounded-full bg-elev3 border border-brd text-xs font-semibold text-ink hover:border-primary/50 hover:text-primary transition self-start">Read More</button>
+    </div>
+  `).join('');
+}
+
+function openInsight(id) {
+  const article = creatorInsights.find(a => a.id === id);
+  if (!article) return;
+  const modal = document.getElementById('insight-modal');
+  const content = document.getElementById('insight-modal-content');
+  const paragraphs = article.body.trim().split(/\n\s*\n/).map(p => `<p class="text-sm text-dim leading-relaxed mb-3">${escapeHTML(p.trim())}</p>`).join('');
+  content.innerHTML = `
+    <span class="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-elev3 text-dim">${escapeHTML(article.tag)} · ${escapeHTML(article.readTime)}</span>
+    <h3 class="font-display font-bold text-xl text-ink mt-3 mb-4">${escapeHTML(article.title)}</h3>
+    <div>${paragraphs}</div>
+  `;
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+window.openInsight = openInsight;
+
+function closeInsight() {
+  const modal = document.getElementById('insight-modal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+}
+window.closeInsight = closeInsight;
 
 /* ============================================================
    Generic tool modal shell (Photo / Video / PDF)
