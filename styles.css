@@ -1,6 +1,5 @@
 /* ============================================================
-   All-in-One Creator Studio — custom stylesheet
-   (extracted from inline <style>, plus bug fixes noted inline)
+   All-in-One Creator — custom stylesheet
    ============================================================ */
 
 * { scrollbar-width: thin; scrollbar-color: #2b3140 transparent; }
@@ -79,16 +78,6 @@ input[type="range"].accent-teal::-webkit-slider-thumb { background:#2DD4BF; }
 
 ::selection { background: #8B7CF6; color: #0B0D12; }
 
-/* ------------------------------------------------------------
-   BUG FIX #1 — dual-handle trim slider was unusable.
-   The two overlapping <input type="range"> elements both had
-   `pointer-events-none` on the WHOLE control, which also blocks
-   their thumbs, so neither slider could be dragged at all.
-   Fix: keep the track/element non-interactive so it doesn't
-   swallow clicks meant for the other handle, but re-enable
-   pointer events specifically on each thumb so it stays
-   draggable.
-------------------------------------------------------------- */
 input[type="range"].range-dual {
   pointer-events: none;
 }
@@ -99,14 +88,4 @@ input[type="range"].range-dual::-moz-range-thumb {
   pointer-events: auto;
 }
 
-/* ------------------------------------------------------------
-   BUG FIX #2 — mobile category tabs (Photo/Video/PDF).
-   The old markup toggled a Tailwind `text-dim` class on top of
-   a fixed `text-violet` / `text-amber` / `text-teal` class on
-   the very same element. Two Tailwind color utilities fighting
-   over the same `color` property produce inconsistent results
-   depending on generated CSS order, so inactive tabs sometimes
-   didn't dim. Fix: dim inactive tabs with opacity instead, which
-   never conflicts with the category color.
-------------------------------------------------------------- */
 .mnav.is-dim { opacity: .55; }
