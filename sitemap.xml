@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  This site is a single-page app: Home, Photo Tools, Video Tools, and
+  PDF Tools are all tab panels inside index.html, not separate URLs.
+  That means one <url> entry (the homepage) is the correct sitemap for
+  Google right now — this is normal for SPA-style tools sites and is
+  not a sign anything is missing.
+
+  Live production URL: https://all-in-one-creator-studio.vercel.app/
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://all-in-one-creator-studio.vercel.app/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
