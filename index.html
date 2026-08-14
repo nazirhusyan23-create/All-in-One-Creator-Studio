@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>All-in-One Creator — Professional Creator Tools &amp; Calculators</title>
+<meta name="description" content="Free browser-based creator toolkit: AI background remover, image compressor, video trimmer, PDF merge/split/compress, plus revenue calculators for creators.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -35,6 +36,7 @@
     },
   }
 </script>
+<link rel="stylesheet" href="styles.css">
 <style>
   .panel { display: none; }
   .panel.active { display: flex; }
@@ -47,7 +49,7 @@
 <!-- Google AdSense Verification Script -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2006445566626425" crossorigin="anonymous"></script>
 </head>
-<body class="bg-base text-ink font-sans antialiased min-h-screen">
+<body class="bg-base text-ink font-sans antialiased min-h-screen bg-noise">
 
 <div class="flex min-h-screen">
 
@@ -65,22 +67,26 @@
 
     <nav class="flex flex-col gap-1" id="sidebar-nav">
       <button data-cat="home" class="nav-item active group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors">
-        <span class="w-2 h-2 rounded-full shrink-0 bg-violet"></span>
+        <span class="rail-dot w-2 h-2 rounded-full shrink-0 bg-violet"></span>
         Home
       </button>
       <button data-cat="photo" class="nav-item group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors">
-        <span class="w-2 h-2 rounded-full shrink-0 bg-violet"></span>
+        <span class="rail-dot w-2 h-2 rounded-full shrink-0 bg-violet"></span>
         Photo Tools
       </button>
       <button data-cat="video" class="nav-item group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors">
-        <span class="w-2 h-2 rounded-full shrink-0 bg-amber"></span>
+        <span class="rail-dot w-2 h-2 rounded-full shrink-0 bg-amber"></span>
         Video Tools
       </button>
       <button data-cat="pdf" class="nav-item group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-dim hover:text-ink hover:bg-elev2 transition-colors">
-        <span class="w-2 h-2 rounded-full shrink-0 bg-teal"></span>
+        <span class="rail-dot w-2 h-2 rounded-full shrink-0 bg-teal"></span>
         PDF Tools
       </button>
     </nav>
+
+    <div class="mt-auto pt-6 border-t border-brd">
+      <p class="text-[11px] text-faint leading-relaxed px-1">All processing runs locally in your browser. Files are never uploaded to a server.</p>
+    </div>
   </aside>
 
   <!-- ================= MAIN ================= -->
@@ -96,7 +102,7 @@
 
         <div class="flex items-center gap-3 rounded-xl border border-violet/25 bg-violet-soft px-4 py-3 mb-6">
           <svg class="w-5 h-5 text-violet shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
-          <p class="text-sm text-ink"><span class="font-semibold">System Online.</span> <span class="text-dim">All creator calculators and editing suites are fully operational.</span></p>
+          <p class="text-sm text-ink"><span class="font-semibold">All tools run client-side.</span> <span class="text-dim">Nothing you upload ever leaves this browser tab.</span></p>
         </div>
       </div>
     </div>
@@ -114,7 +120,7 @@
     <div class="px-4 sm:px-8 pb-16 flex-1">
       <div class="max-w-6xl mx-auto grid grid-cols-1 gap-6 items-start">
         <main class="min-w-0 flex flex-col gap-5">
-          
+
           <!-- HOME PANEL -->
           <section id="panel-home" class="panel active flex-col gap-5">
             <div class="rounded-2xl border border-brd bg-elev overflow-hidden">
@@ -136,17 +142,17 @@
           <section id="panel-photo" class="panel flex-col gap-5">
             <div class="rounded-2xl border border-brd bg-elev p-5 sm:p-6">
               <h2 class="font-display font-semibold text-lg text-ink">Background Remover &amp; Photo Studio</h2>
-              <p class="text-dim text-sm mt-0.5 mb-4">Process and optimize your creative assets instantly.</p>
+              <p class="text-dim text-sm mt-0.5 mb-4">Process and optimize your creative assets instantly — powered by an in-browser AI model, no upload required.</p>
               <div class="grid sm:grid-cols-2 gap-4">
                 <div class="p-4 rounded-xl border border-brd bg-elev2">
                   <h4 class="font-display font-semibold text-sm text-ink">AI Background Remover</h4>
-                  <p class="text-xs text-dim mt-1">Upload images to automatically strip backgrounds for thumbnails and app icons.</p>
-                  <button class="mt-3 px-3 py-1.5 rounded-lg bg-violet text-xs font-medium text-white">Launch Tool</button>
+                  <p class="text-xs text-dim mt-1">Upload an image to automatically strip the background for thumbnails and app icons. Runs a real segmentation model locally.</p>
+                  <button onclick="openTool('bg-remover')" class="mt-3 px-3 py-1.5 rounded-lg bg-violet text-xs font-medium text-white hover:opacity-90 transition">Launch Tool</button>
                 </div>
                 <div class="p-4 rounded-xl border border-brd bg-elev2">
                   <h4 class="font-display font-semibold text-sm text-ink">Batch Image Compressor</h4>
-                  <p class="text-xs text-dim mt-1">Optimize JPEG/PNG sizes for faster web and mobile app loading speeds.</p>
-                  <button class="mt-3 px-3 py-1.5 rounded-lg bg-violet text-xs font-medium text-white">Launch Tool</button>
+                  <p class="text-xs text-dim mt-1">Optimize JPEG/PNG/WebP sizes for faster web and mobile app loading speeds. Drop in multiple files at once.</p>
+                  <button onclick="openTool('img-compressor')" class="mt-3 px-3 py-1.5 rounded-lg bg-violet text-xs font-medium text-white hover:opacity-90 transition">Launch Tool</button>
                 </div>
               </div>
             </div>
@@ -156,19 +162,20 @@
           <section id="panel-video" class="panel flex-col gap-5">
             <div class="rounded-2xl border border-brd bg-elev p-5 sm:p-6">
               <h2 class="font-display font-semibold text-lg text-ink">Video Trim &amp; Cut Suite</h2>
-              <p class="text-dim text-sm mt-0.5 mb-4">Manage and edit video clips for your multi-platform channels.</p>
+              <p class="text-dim text-sm mt-0.5 mb-4">Manage and edit video clips for your multi-platform channels — powered by a real FFmpeg build compiled to WebAssembly.</p>
               <div class="grid sm:grid-cols-2 gap-4">
                 <div class="p-4 rounded-xl border border-brd bg-elev2">
                   <h4 class="font-display font-semibold text-sm text-ink">Video Trimmer</h4>
-                  <p class="text-xs text-dim mt-1">Cut promotional segments and short-form video previews.</p>
-                  <button class="mt-3 px-3 py-1.5 rounded-lg bg-amber text-xs font-medium text-base">Launch Tool</button>
+                  <p class="text-xs text-dim mt-1">Cut promotional segments and short-form video previews with precise start/end control.</p>
+                  <button onclick="openTool('video-trim')" class="mt-3 px-3 py-1.5 rounded-lg bg-amber text-xs font-medium text-base hover:opacity-90 transition">Launch Tool</button>
                 </div>
                 <div class="p-4 rounded-xl border border-brd bg-elev2">
                   <h4 class="font-display font-semibold text-sm text-ink">Resolution Resizer</h4>
-                  <p class="text-xs text-dim mt-1">Convert landscape clips into vertical 9:16 reels and shorts formats.</p>
-                  <button class="mt-3 px-3 py-1.5 rounded-lg bg-amber text-xs font-medium text-base">Launch Tool</button>
+                  <p class="text-xs text-dim mt-1">Convert landscape clips into vertical 9:16 reels and shorts formats with a center crop.</p>
+                  <button onclick="openTool('video-resize')" class="mt-3 px-3 py-1.5 rounded-lg bg-amber text-xs font-medium text-base hover:opacity-90 transition">Launch Tool</button>
                 </div>
               </div>
+              <p class="text-[11px] text-faint mt-4 leading-relaxed">First run downloads a ~30MB WebAssembly engine from a CDN and caches it in your browser session. Best for clips under a couple hundred MB — very large files may be slow on lower-powered devices since everything runs on your machine, not a server.</p>
             </div>
           </section>
 
@@ -176,17 +183,17 @@
           <section id="panel-pdf" class="panel flex-col gap-5">
             <div class="rounded-2xl border border-brd bg-elev p-5 sm:p-6">
               <h2 class="font-display font-semibold text-lg text-ink">PDF Utility Tools</h2>
-              <p class="text-dim text-sm mt-0.5 mb-4">Merge, split, and compress documents efficiently.</p>
+              <p class="text-dim text-sm mt-0.5 mb-4">Merge, split, and compress documents efficiently, entirely in-browser.</p>
               <div class="grid sm:grid-cols-2 gap-4">
                 <div class="p-4 rounded-xl border border-brd bg-elev2">
                   <h4 class="font-display font-semibold text-sm text-ink">Merge &amp; Split Documents</h4>
-                  <p class="text-xs text-dim mt-1">Combine multiple chapters or split large report documents seamlessly.</p>
-                  <button class="mt-3 px-3 py-1.5 rounded-lg bg-teal text-xs font-medium text-base">Launch Tool</button>
+                  <p class="text-xs text-dim mt-1">Combine multiple PDFs into one, or split a document into a page-per-file ZIP archive.</p>
+                  <button onclick="openTool('pdf-merge')" class="mt-3 px-3 py-1.5 rounded-lg bg-teal text-xs font-medium text-base hover:opacity-90 transition">Launch Tool</button>
                 </div>
                 <div class="p-4 rounded-xl border border-brd bg-elev2">
                   <h4 class="font-display font-semibold text-sm text-ink">PDF Compressor</h4>
-                  <p class="text-xs text-dim mt-1">Reduce PDF file size while maintaining text and graphic clarity.</p>
-                  <button class="mt-3 px-3 py-1.5 rounded-lg bg-teal text-xs font-medium text-base">Launch Tool</button>
+                  <p class="text-xs text-dim mt-1">Strip unused metadata and re-linearize document structure to shrink file size.</p>
+                  <button onclick="openTool('pdf-compress')" class="mt-3 px-3 py-1.5 rounded-lg bg-teal text-xs font-medium text-base hover:opacity-90 transition">Launch Tool</button>
                 </div>
               </div>
             </div>
@@ -205,6 +212,23 @@
     <div id="modal-content"></div>
   </div>
 </div>
+
+<!-- GENERIC TOOL MODAL CONTAINER (Photo / Video / PDF tools) -->
+<div id="tool-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+  <div class="bg-elev2 border border-brd rounded-2xl max-w-xl w-full max-h-[92vh] overflow-y-auto p-6 relative shadow-2xl">
+    <button onclick="closeTool()" class="absolute top-4 right-4 text-dim hover:text-ink text-sm font-mono bg-elev3 px-2.5 py-1 rounded-lg">✕ Close</button>
+    <div id="tool-modal-content"></div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container" class="fixed bottom-4 right-4 z-[60] flex flex-col gap-2 items-end"></div>
+
+<!-- ===== Third-party libraries (all run locally in the browser; no data leaves the client) ===== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+<script src="https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
 
 <script src="script.js"></script>
 </body>
