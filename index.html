@@ -122,6 +122,16 @@
           <h3 class="font-display font-semibold text-base mb-3 text-ink">Revenue &amp; Analytics Calculators</h3>
           <div id="calc-grid" class="grid sm:grid-cols-2 gap-4"></div>
         </div>
+
+        <div>
+          <div class="flex items-end justify-between mb-3 gap-3">
+            <div>
+              <h3 class="font-display font-semibold text-base text-ink">Creator Insights &amp; Daily Guides</h3>
+              <p class="text-xs text-dim mt-0.5">Short, practical reads on growing and monetizing your work — updated regularly.</p>
+            </div>
+          </div>
+          <div id="insights-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
       </section>
 
       <!-- PHOTO TOOLS PANEL -->
@@ -220,6 +230,14 @@
   <div class="bg-elev border border-brd rounded-2xl max-w-xl w-full max-h-[92vh] overflow-y-auto p-6 relative shadow-2xl">
     <button onclick="closeTool()" class="absolute top-4 right-4 text-dim hover:text-ink text-sm font-mono bg-elev3 px-2.5 py-1 rounded-full">✕ Close</button>
     <div id="tool-modal-content"></div>
+  </div>
+</div>
+
+<!-- INSIGHT ARTICLE MODAL CONTAINER -->
+<div id="insight-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-ink/40 backdrop-blur-sm p-4">
+  <div class="bg-elev border border-brd rounded-2xl max-w-xl w-full max-h-[85vh] overflow-y-auto p-6 relative shadow-2xl">
+    <button onclick="closeInsight()" class="absolute top-4 right-4 text-dim hover:text-ink text-sm font-mono bg-elev3 px-2.5 py-1 rounded-full">✕ Close</button>
+    <div id="insight-modal-content"></div>
   </div>
 </div>
 
