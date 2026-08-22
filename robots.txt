@@ -1,5 +1,4 @@
-# All-in-One Creator — everything here is a free, public client-side tool.
 User-agent: *
 Allow: /
 
-Sitemap: https://all-in-one-creator-studio.vercel.app/sitemap.xml
+Sitemap: https://free-online-tools-sigma.vercel.app/sitemap.xml

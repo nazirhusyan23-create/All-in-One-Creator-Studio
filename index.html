@@ -52,6 +52,55 @@
 }
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Do you upload or store my files?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Every tool on this site runs entirely inside your browser using JavaScript APIs like Canvas, MediaRecorder, and pdf-lib. Your files never leave your device, and we have no server-side storage for uploaded media."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is All-in-One Creator really free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. All tools and calculators are free to use with no sign-up, account, or watermark required. The site is supported by display advertising rather than subscriptions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How accurate are the revenue calculators?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The calculators give estimates based on the inputs you provide, using the same general formulas platforms and advertisers use. Actual payouts depend on factors specific to your account and platform, so treat results as a planning estimate rather than a guarantee."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What file formats are supported?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Photo tools accept JPEG, PNG, and WebP. Video tools accept common browser-playable formats such as MP4 and WebM and export WebM. PDF tools accept standard PDF documents and export either a merged PDF or a ZIP of split pages."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need to install anything to use these tools?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No installation is required. Everything runs in a modern desktop or mobile browser such as Chrome, Edge, Firefox, or Safari."
+      }
+    }
+  ]
+}
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -554,6 +603,24 @@
     </main>
   </div>
 </div>
+
+<!-- ================= FOOTER ================= -->
+<footer class="border-t border-brd bg-elev mt-4">
+  <div class="max-w-6xl mx-auto px-4 sm:px-8 py-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <div class="flex items-center gap-2.5">
+      <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-primary via-violet to-teal flex items-center justify-center shrink-0">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M4 12L10 18L20 6" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <p class="text-xs text-dim">&copy; 2026 All-in-One Creator. All rights reserved.</p>
+    </div>
+    <nav class="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-dim">
+      <a href="about.html" class="hover:text-ink transition-colors">About Us</a>
+      <a href="contact.html" class="hover:text-ink transition-colors">Contact Us</a>
+      <a href="privacy.html" class="hover:text-ink transition-colors">Privacy Policy</a>
+      <a href="terms.html" class="hover:text-ink transition-colors">Terms of Service</a>
+    </nav>
+  </div>
+</footer>
 
 <!-- MODALS -->
 <div id="calc-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-ink/40 backdrop-blur-sm p-4">
