@@ -149,6 +149,12 @@
         <p class="text-[11px] text-faint font-mono uppercase tracking-wide mt-0.5">Files Uploaded To A Server</p>
       </div>
     </div>
+
+    <div class="bg-elev border border-brd rounded-2xl p-5 sm:p-7 mb-8">
+      <h2 class="font-display font-bold text-lg text-ink mb-2">What Is All-in-One Creator?</h2>
+      <p class="text-dim text-sm leading-relaxed mb-3">All-in-One Creator is a free browser-based toolkit built for content creators, freelancers, students, and small business owners who need quick media utilities without installing software or handing files over to a third-party server. Every tool on this page — from the background eraser to the PDF compressor — runs using your browser's own Canvas, MediaRecorder, and File APIs. That means your photos, videos, and documents are processed locally on your device and are never transmitted anywhere, which keeps your work fast, private, and free from upload wait times.</p>
+      <p class="text-dim text-sm leading-relaxed">Alongside the media tools, we've built a set of revenue and analytics calculators aimed specifically at digital creators: estimating AdSense earnings, YouTube ad revenue, sponsorship rates, freelance day rates, and more. Below you'll find a full breakdown of every tool, how it works, and how to use it, plus a set of creator insights and a frequently-asked-questions section to help you get the most out of the site.</p>
+    </div>
   </div>
 </div>
 
@@ -181,6 +187,12 @@
           </div>
           <div id="insights-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </div>
+
+        <div class="rounded-2xl border border-brd bg-elev p-6 sm:p-8">
+          <h3 class="font-display font-semibold text-base text-ink mb-3">Why Creators Use These Calculators</h3>
+          <p class="text-dim text-sm leading-relaxed mb-3">Understanding your real earning potential is one of the hardest parts of being an independent creator. Ad networks, sponsors, and platforms rarely explain how a payout is actually calculated, which leaves creators guessing about whether a deal, a CPM, or a monetization setting is actually fair. Our calculators walk through the same variables that platforms and advertisers use internally — impressions, click-through rate, RPM, audience geography, niche category, and engagement rate — so you can plug in your own numbers and get a realistic estimate in seconds.</p>
+          <p class="text-dim text-sm leading-relaxed">Each calculator is built to be transparent: instead of a black-box result, you can see exactly which inputs move the number, which makes them useful not just for a one-off estimate but as a planning tool when you're deciding whether to grow a channel, negotiate a sponsorship, or switch monetization strategies.</p>
+        </div>
       </section>
 
       <!-- PHOTO TOOLS PANEL -->
@@ -205,6 +217,18 @@
               <p class="text-xs text-dim mt-1">Optimize JPEG/PNG/WebP sizes for faster web and mobile app loading speeds. Drop in multiple files at once.</p>
               <button onclick="openTool('img-compressor')" class="mt-3 px-3.5 py-1.5 rounded-full bg-violet text-xs font-semibold text-white hover:opacity-90 transition">Launch Tool</button>
             </div>
+          </div>
+
+          <div class="mt-6 pt-6 border-t border-brd">
+            <h3 class="font-display font-semibold text-sm text-ink mb-2">How to Use the Background Eraser</h3>
+            <ol class="text-xs text-dim leading-relaxed list-decimal list-inside space-y-1 mb-4">
+              <li>Click "Launch Tool" and select an image from your device — nothing is uploaded, the file stays in your browser's memory.</li>
+              <li>The tool samples the pixels near the edges of the photo to detect a flat or gradient-colored background.</li>
+              <li>An edge flood-fill algorithm walks outward from the corners, marking connected pixels of similar color as transparent.</li>
+              <li>Adjust the tolerance slider if the background wasn't fully removed, then download your PNG with a transparent background.</li>
+            </ol>
+            <h3 class="font-display font-semibold text-sm text-ink mb-2">How to Use the Batch Image Compressor</h3>
+            <p class="text-xs text-dim leading-relaxed">Drop in several JPEG, PNG, or WebP files at once, choose a target quality level, and the compressor re-encodes every image using the browser's native Canvas <span class="font-mono">toBlob</span> API. This typically cuts file size significantly for web use while keeping visual quality high enough for thumbnails, blog headers, and social posts — ideal when you need faster-loading pages or smaller uploads for a mobile app.</p>
           </div>
         </div>
       </section>
@@ -232,6 +256,18 @@
               <button onclick="openTool('video-resize')" class="mt-3 px-3.5 py-1.5 rounded-full bg-amber text-xs font-semibold text-white hover:opacity-90 transition">Launch Tool</button>
             </div>
           </div>
+
+          <div class="mt-6 pt-6 border-t border-brd">
+            <h3 class="font-display font-semibold text-sm text-ink mb-2">How to Use the Video Trimmer</h3>
+            <ol class="text-xs text-dim leading-relaxed list-decimal list-inside space-y-1 mb-4">
+              <li>Select a video file from your device; it loads directly into an in-page video element for preview.</li>
+              <li>Drag the start and end handles on the timeline to mark the segment you want to keep.</li>
+              <li>The tool uses the browser's MediaRecorder API to capture and re-encode only the selected range.</li>
+              <li>Download the trimmed clip as a WebM file, ready for a short-form preview, teaser, or highlight reel.</li>
+            </ol>
+            <h3 class="font-display font-semibold text-sm text-ink mb-2">How to Use the Resolution Resizer</h3>
+            <p class="text-xs text-dim leading-relaxed">Upload a landscape (16:9) clip and the resizer redraws every frame onto a vertical 9:16 canvas with a smart center crop, which is the format expected by Reels, Shorts, and TikTok. Because the conversion happens frame-by-frame on your own device, there's no queue and no watermark — just an export you can immediately upload to your platform of choice.</p>
+          </div>
         </div>
       </section>
 
@@ -257,6 +293,45 @@
               <p class="text-xs text-dim mt-1">Strip unused metadata and re-linearize document structure to shrink file size.</p>
               <button onclick="openTool('pdf-compress')" class="mt-3 px-3.5 py-1.5 rounded-full bg-teal text-xs font-semibold text-white hover:opacity-90 transition">Launch Tool</button>
             </div>
+          </div>
+
+          <div class="mt-6 pt-6 border-t border-brd">
+            <h3 class="font-display font-semibold text-sm text-ink mb-2">How to Merge and Split PDFs</h3>
+            <ol class="text-xs text-dim leading-relaxed list-decimal list-inside space-y-1 mb-4">
+              <li>Choose "Merge" and select two or more PDF files; they're read locally using the pdf-lib library.</li>
+              <li>Reorder the files if needed, then combine them into a single downloadable document.</li>
+              <li>Choose "Split" instead to break one PDF into a ZIP archive containing one file per page, built with JSZip.</li>
+            </ol>
+            <h3 class="font-display font-semibold text-sm text-ink mb-2">How the PDF Compressor Works</h3>
+            <p class="text-xs text-dim leading-relaxed">The compressor strips unused embedded metadata, removes duplicate objects, and re-linearizes the document's internal structure so it opens and downloads faster — useful when you need to email a document or keep it under a platform's upload size limit without sending it through a third-party file-conversion site.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ SECTION (always visible, not part of tab panels) -->
+      <section class="rounded-2xl border border-brd bg-elev p-6 sm:p-8">
+        <h2 class="font-display font-bold text-lg text-ink mb-1">Frequently Asked Questions</h2>
+        <p class="text-dim text-sm mb-5">Common questions about how All-in-One Creator works, privacy, and file handling.</p>
+        <div class="space-y-5">
+          <div>
+            <h4 class="font-display font-semibold text-sm text-ink mb-1">Do you upload or store my files?</h4>
+            <p class="text-xs text-dim leading-relaxed">No. Every tool on this site — the background eraser, image compressor, video trimmer, resizer, and PDF utilities — runs entirely inside your browser using JavaScript APIs like Canvas, MediaRecorder, and pdf-lib. Your files never leave your device, and we have no server-side storage for uploaded media.</p>
+          </div>
+          <div>
+            <h4 class="font-display font-semibold text-sm text-ink mb-1">Is All-in-One Creator really free?</h4>
+            <p class="text-xs text-dim leading-relaxed">Yes. All tools and calculators are free to use with no sign-up, account, or watermark required. The site is supported by display advertising rather than subscriptions.</p>
+          </div>
+          <div>
+            <h4 class="font-display font-semibold text-sm text-ink mb-1">How accurate are the revenue calculators?</h4>
+            <p class="text-xs text-dim leading-relaxed">The calculators give estimates based on the inputs you provide — impressions, CTR, RPM, niche, or audience geography — using the same general formulas platforms and advertisers use. Actual payouts depend on factors specific to your account and platform, so treat results as a planning estimate rather than a guarantee.</p>
+          </div>
+          <div>
+            <h4 class="font-display font-semibold text-sm text-ink mb-1">What file formats are supported?</h4>
+            <p class="text-xs text-dim leading-relaxed">Photo tools accept JPEG, PNG, and WebP. Video tools accept common browser-playable formats such as MP4 and WebM and export WebM. PDF tools accept standard PDF documents and export either a merged PDF or a ZIP of split pages.</p>
+          </div>
+          <div>
+            <h4 class="font-display font-semibold text-sm text-ink mb-1">Do I need to install anything?</h4>
+            <p class="text-xs text-dim leading-relaxed">No installation is required. Everything runs in a modern desktop or mobile browser such as Chrome, Edge, Firefox, or Safari.</p>
           </div>
         </div>
       </section>
