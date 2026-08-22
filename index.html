@@ -90,6 +90,31 @@
   .panel.active { display: flex; }
   .nav-item { opacity: 0.75; cursor: pointer; text-decoration: none; }
   .nav-item.active { opacity: 1; background: #4F46E5; color: #FFFFFF; box-shadow: 0 1px 2px rgba(79,70,229,0.25); }
+
+  /* ---- Hero flow visualization ---- */
+  @keyframes flowPulse {
+    0%   { transform: translateX(-6px); opacity: .35; }
+    50%  { opacity: 1; }
+    100% { transform: translateX(6px); opacity: .35; }
+  }
+  .flow-dot { animation: flowPulse 1.6s ease-in-out infinite; }
+  .flow-dot:nth-child(2) { animation-delay: .25s; }
+  .flow-dot:nth-child(3) { animation-delay: .5s; }
+
+  @keyframes heroBlob {
+    0%, 100% { transform: translate(0,0) scale(1); }
+    50% { transform: translate(12px,-10px) scale(1.05); }
+  }
+  .hero-blob { animation: heroBlob 9s ease-in-out infinite; }
+  .hero-blob-2 { animation: heroBlob 11s ease-in-out infinite reverse; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flow-dot, .hero-blob, .hero-blob-2 { animation: none !important; }
+  }
+
+  /* ---- Scroll reveal ---- */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .5s ease; }
+  .reveal.in-view { opacity: 1; transform: translateY(0); }
 </style>
 </head>
 <body class="bg-base text-ink font-sans antialiased min-h-screen bg-noise">
@@ -126,32 +151,84 @@
 <!-- ================= MAIN ================= -->
 <div class="px-4 sm:px-8 pt-8">
   <div class="max-w-6xl mx-auto">
-    <div class="flex flex-col gap-1.5 mb-6">
-      <p class="font-mono text-[11px] tracking-widest text-primary uppercase">Creator Dashboard &amp; Analytics</p>
-      <h1 class="font-display text-2xl sm:text-3xl font-bold tracking-tight text-ink">All-in-One Creator</h1>
-      <p class="text-dim text-sm max-w-xl">Your complete hub for digital media utilities, revenue calculators, and creator tools — nothing ever leaves your browser.</p>
+
+    <!-- HERO -->
+    <div class="relative overflow-hidden rounded-3xl border border-brd bg-elev mb-8">
+      <div class="hero-blob absolute -top-16 -left-16 w-64 h-64 rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
+      <div class="hero-blob-2 absolute -bottom-20 -right-10 w-72 h-72 rounded-full bg-teal/10 blur-3xl pointer-events-none"></div>
+
+      <div class="relative p-6 sm:p-10 grid lg:grid-cols-[1.3fr_1fr] gap-8 items-center">
+        <div>
+          <div class="inline-flex items-center gap-1.5 text-[11px] font-mono text-teal bg-teal-soft px-2.5 py-1.5 rounded-full border border-teal/20 mb-4">
+            <span class="w-1.5 h-1.5 rounded-full bg-teal flow-dot"></span> 13 tools · 100% client-side · always free
+          </div>
+          <h1 class="font-display text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight text-ink leading-[1.08] mb-4">
+            Every creator tool you need.<br class="hidden sm:block">
+            <span class="bg-gradient-to-r from-primary via-violet to-teal bg-clip-text text-transparent">Zero files ever uploaded.</span>
+          </h1>
+          <p class="text-dim text-sm sm:text-[15px] max-w-lg leading-relaxed mb-6">
+            Erase backgrounds, trim video, merge PDFs, write cleaner captions, and forecast your creator revenue — all computed instantly inside your own browser tab. No accounts, no waiting rooms, no server ever sees your work.
+          </p>
+          <div class="flex flex-wrap gap-2">
+            <button data-cat="photo" class="nav-item lift-card shrink-0 px-4 py-2 rounded-full text-xs font-semibold bg-violet-soft text-violet border border-violet/20 hover:bg-violet hover:text-white transition-colors">📸 Photo Tools</button>
+            <button data-cat="video" class="nav-item lift-card shrink-0 px-4 py-2 rounded-full text-xs font-semibold bg-amber-soft text-amber border border-amber/20 hover:bg-amber hover:text-white transition-colors">🎬 Video Tools</button>
+            <button data-cat="pdf" class="nav-item lift-card shrink-0 px-4 py-2 rounded-full text-xs font-semibold bg-teal-soft text-teal border border-teal/20 hover:bg-teal hover:text-white transition-colors">📄 PDF Tools</button>
+            <button data-cat="text" class="nav-item lift-card shrink-0 px-4 py-2 rounded-full text-xs font-semibold bg-primary-soft text-primary border border-primary/20 hover:bg-primary hover:text-white transition-colors">✍️ Text &amp; QR</button>
+          </div>
+        </div>
+
+        <!-- Signature: live "nothing leaves your browser" flow visual -->
+        <div class="bg-elev2 border border-brd rounded-2xl p-5 sm:p-6">
+          <p class="font-mono text-[10px] tracking-widest text-faint uppercase mb-4 text-center">What happens when you use a tool</p>
+          <div class="flex items-center justify-between gap-1">
+            <div class="flex flex-col items-center gap-2 w-20">
+              <div class="w-12 h-12 rounded-2xl bg-elev border border-brd flex items-center justify-center text-lg">🖼️</div>
+              <p class="text-[10px] text-dim text-center leading-tight">Your file</p>
+            </div>
+            <div class="flex items-center gap-1 flex-1 justify-center">
+              <span class="w-1.5 h-1.5 rounded-full bg-primary/50 flow-dot"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-violet/50 flow-dot"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-teal/50 flow-dot"></span>
+            </div>
+            <div class="flex flex-col items-center gap-2 w-20">
+              <div class="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center text-lg">🔒</div>
+              <p class="text-[10px] text-dim text-center leading-tight">Your browser</p>
+            </div>
+            <div class="flex items-center gap-1 flex-1 justify-center">
+              <span class="w-1.5 h-1.5 rounded-full bg-primary/50 flow-dot"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-violet/50 flow-dot"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-teal/50 flow-dot"></span>
+            </div>
+            <div class="flex flex-col items-center gap-2 w-20">
+              <div class="w-12 h-12 rounded-2xl bg-teal/10 border border-teal/30 flex items-center justify-center text-lg">✅</div>
+              <p class="text-[10px] text-dim text-center leading-tight">Instant result</p>
+            </div>
+          </div>
+          <p class="text-[11px] text-faint text-center mt-4 font-mono">No upload step. No server. No wait.</p>
+        </div>
+      </div>
     </div>
 
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-      <div class="bg-elev border border-brd rounded-2xl px-4 py-4">
-        <p class="font-display text-xl font-bold text-ink">10</p>
+      <div class="lift-card bg-elev border border-brd rounded-2xl px-4 py-4">
+        <p class="font-display text-xl font-bold text-ink">13</p>
         <p class="text-[11px] text-faint font-mono uppercase tracking-wide mt-0.5">Creator Tools</p>
       </div>
-      <div class="bg-elev border border-brd rounded-2xl px-4 py-4">
+      <div class="lift-card bg-elev border border-brd rounded-2xl px-4 py-4">
         <p class="font-display text-xl font-bold text-ink">10</p>
         <p class="text-[11px] text-faint font-mono uppercase tracking-wide mt-0.5">Revenue Calculators</p>
       </div>
-      <div class="bg-elev border border-brd rounded-2xl px-4 py-4">
+      <div class="lift-card bg-elev border border-brd rounded-2xl px-4 py-4">
         <p class="font-display text-xl font-bold text-teal">100%</p>
         <p class="text-[11px] text-faint font-mono uppercase tracking-wide mt-0.5">Runs In-Browser</p>
       </div>
-      <div class="bg-elev border border-brd rounded-2xl px-4 py-4">
+      <div class="lift-card bg-elev border border-brd rounded-2xl px-4 py-4">
         <p class="font-display text-xl font-bold text-primary">0</p>
         <p class="text-[11px] text-faint font-mono uppercase tracking-wide mt-0.5">Files Uploaded To A Server</p>
       </div>
     </div>
 
-    <div class="bg-elev border border-brd rounded-2xl p-5 sm:p-7 mb-8">
+    <div class="bg-elev border border-brd rounded-2xl p-5 sm:p-7 mb-8 reveal">
       <h2 class="font-display font-bold text-lg text-ink mb-2">What Is All-in-One Creator?</h2>
       <p class="text-dim text-sm leading-relaxed mb-3">All-in-One Creator is a free browser-based toolkit built for content creators, freelancers, students, and small business owners who need quick media and writing utilities without installing software or handing files over to a third-party server. Every tool on this page — from the background eraser to the QR code generator — runs using your browser's own Canvas, MediaRecorder, and File APIs. That means your photos, videos, documents, and text are processed locally on your device and are never transmitted anywhere, which keeps your work fast, private, and free from upload wait times.</p>
       <p class="text-dim text-sm leading-relaxed">Alongside the media tools, we've built a set of revenue and analytics calculators aimed specifically at digital creators: estimating AdSense earnings, YouTube ad revenue, sponsorship rates, freelance day rates, and more. Below you'll find a full breakdown of every tool, how it works, and how to use it, plus a set of creator insights and a frequently-asked-questions section to help you get the most out of the site.</p>
@@ -179,7 +256,7 @@
           <div id="calc-grid" class="grid sm:grid-cols-2 gap-4"></div>
         </div>
 
-        <div>
+        <div class="reveal">
           <div class="flex items-end justify-between mb-3 gap-3">
             <div>
               <h3 class="font-display font-semibold text-base text-ink">Creator Insights &amp; Daily Guides</h3>
@@ -189,7 +266,7 @@
           <div id="insights-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </div>
 
-        <div class="rounded-2xl border border-brd bg-elev p-6 sm:p-8">
+        <div class="rounded-2xl border border-brd bg-elev p-6 sm:p-8 reveal">
           <h3 class="font-display font-semibold text-base text-ink mb-3">Why Creators Use These Calculators</h3>
           <p class="text-dim text-sm leading-relaxed mb-3">Understanding your real earning potential is one of the hardest parts of being an independent creator. Ad networks, sponsors, and platforms rarely explain how a payout is actually calculated, which leaves creators guessing about whether a deal, a CPM, or a monetization setting is actually fair. Our calculators walk through the same variables that platforms and advertisers use internally — impressions, click-through rate, RPM, audience geography, niche category, and engagement rate — so you can plug in your own numbers and get a realistic estimate in seconds.</p>
           <p class="text-dim text-sm leading-relaxed">Each calculator is built to be transparent: instead of a black-box result, you can see exactly which inputs move the number, which makes them useful not just for a one-off estimate but as a planning tool when you're deciding whether to grow a channel, negotiate a sponsorship, or switch monetization strategies.</p>
@@ -202,7 +279,7 @@
           <h2 class="font-display font-bold text-lg text-ink">Background Eraser &amp; Photo Studio</h2>
           <p class="text-dim text-sm mt-0.5 mb-4">Process and optimize your creative assets instantly using native browser Canvas APIs — no upload required.</p>
           <div class="grid sm:grid-cols-2 gap-4">
-            <div class="p-4 rounded-2xl border border-brd bg-elev2">
+            <div class="p-4 rounded-2xl border border-brd bg-elev2 lift-card">
               <div class="w-10 h-10 rounded-xl bg-violet-soft flex items-center justify-center mb-3">
                 <svg class="text-violet" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.66V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h5.34"/><circle cx="9" cy="10" r="2"/><path d="M4 20l5-5a2 2 0 0 1 2.83 0L15 18"/><path d="M17 3l4 4M21 3l-4 4"/></svg>
               </div>
@@ -210,7 +287,7 @@
               <p class="text-xs text-dim mt-1">Upload an image to lift a flat or gradient background using an edge-flood-fill algorithm that runs entirely on your device's Canvas.</p>
               <button onclick="openTool('bg-remover')" class="mt-3 px-3.5 py-1.5 rounded-full bg-violet text-xs font-semibold text-white hover:opacity-90 transition">Launch Tool</button>
             </div>
-            <div class="p-4 rounded-2xl border border-brd bg-elev2">
+            <div class="p-4 rounded-2xl border border-brd bg-elev2 lift-card">
               <div class="w-10 h-10 rounded-xl bg-violet-soft flex items-center justify-center mb-3">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-violet"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/></svg>
               </div>
@@ -240,7 +317,7 @@
           <h2 class="font-display font-bold text-lg text-ink">Video Trim &amp; Resize Suite</h2>
           <p class="text-dim text-sm mt-0.5 mb-4">Trim and reformat clips using your browser's native playback, Canvas, and MediaRecorder APIs — no plugins, no uploads.</p>
           <div class="grid sm:grid-cols-2 gap-4">
-            <div class="p-4 rounded-2xl border border-brd bg-elev2">
+            <div class="p-4 rounded-2xl border border-brd bg-elev2 lift-card">
               <div class="w-10 h-10 rounded-xl bg-amber-soft flex items-center justify-center mb-3">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber"><path d="M6 3v18M18 3v18M3 8h4M3 16h4M17 8h4M17 16h4M3 12h18"/></svg>
               </div>
@@ -248,7 +325,7 @@
               <p class="text-xs text-dim mt-1">Cut promotional segments and short-form video previews with precise start/end control. Exports a WebM file.</p>
               <button onclick="openTool('video-trim')" class="mt-3 px-3.5 py-1.5 rounded-full bg-amber text-xs font-semibold text-white hover:opacity-90 transition">Launch Tool</button>
             </div>
-            <div class="p-4 rounded-2xl border border-brd bg-elev2">
+            <div class="p-4 rounded-2xl border border-brd bg-elev2 lift-card">
               <div class="w-10 h-10 rounded-xl bg-amber-soft flex items-center justify-center mb-3">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber"><rect x="3" y="4" width="18" height="12" rx="1.5"/><rect x="8.5" y="18" width="7" height="3" rx="1"/></svg>
               </div>
@@ -278,7 +355,7 @@
           <h2 class="font-display font-bold text-lg text-ink">PDF Utility Tools</h2>
           <p class="text-dim text-sm mt-0.5 mb-4">Merge, split, and compress documents efficiently, entirely in-browser.</p>
           <div class="grid sm:grid-cols-2 gap-4">
-            <div class="p-4 rounded-2xl border border-brd bg-elev2">
+            <div class="p-4 rounded-2xl border border-brd bg-elev2 lift-card">
               <div class="w-10 h-10 rounded-xl bg-teal-soft flex items-center justify-center mb-3">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-teal"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/><path d="M11 7h6a2 2 0 0 1 2 2v4M13 17H7a2 2 0 0 1-2-2V9"/></svg>
               </div>
@@ -286,7 +363,7 @@
               <p class="text-xs text-dim mt-1">Combine multiple PDFs into one, or split a document into a page-per-file ZIP archive.</p>
               <button onclick="openTool('pdf-merge')" class="mt-3 px-3.5 py-1.5 rounded-full bg-teal text-xs font-semibold text-white hover:opacity-90 transition">Launch Tool</button>
             </div>
-            <div class="p-4 rounded-2xl border border-brd bg-elev2">
+            <div class="p-4 rounded-2xl border border-brd bg-elev2 lift-card">
               <div class="w-10 h-10 rounded-xl bg-teal-soft flex items-center justify-center mb-3">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-teal"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/><path d="M9 13.5c1.5-1 3.5-1 5 0M9 16.5c1-.6 2-.6 3 0"/></svg>
               </div>
@@ -316,7 +393,7 @@
           <p class="text-dim text-sm mt-0.5 mb-4">Everyday writing and branding utilities for captions, video descriptions, thumbnails, and quick links — all calculated instantly in your browser.</p>
 
           <!-- Word & Character Counter -->
-          <div class="p-4 rounded-2xl border border-brd bg-elev2 mb-4">
+          <div class="p-4 rounded-2xl border border-brd bg-elev2 mb-4 lift-card">
             <div class="w-10 h-10 rounded-xl bg-primary-soft flex items-center justify-center mb-3">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M4 6h16M4 12h10M4 18h7"/></svg>
             </div>
@@ -332,7 +409,7 @@
           </div>
 
           <!-- Case Converter -->
-          <div class="p-4 rounded-2xl border border-brd bg-elev2 mb-4">
+          <div class="p-4 rounded-2xl border border-brd bg-elev2 mb-4 lift-card">
             <div class="w-10 h-10 rounded-xl bg-violet-soft flex items-center justify-center mb-3">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-violet"><path d="M4 20V4M4 4h6M4 20h6M14 20l4-16 4 16M15.5 14h5"/></svg>
             </div>
@@ -350,7 +427,7 @@
 
           <div class="grid sm:grid-cols-2 gap-4">
             <!-- QR Code Generator -->
-            <div class="p-4 rounded-2xl border border-brd bg-elev2">
+            <div class="p-4 rounded-2xl border border-brd bg-elev2 lift-card">
               <div class="w-10 h-10 rounded-xl bg-amber-soft flex items-center justify-center mb-3">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM19 14h2v2h-2zM14 19h2v2h-2zM19 19h2v2h-2z"/></svg>
               </div>
@@ -362,7 +439,7 @@
             </div>
 
             <!-- Image Color Palette Picker -->
-            <div class="p-4 rounded-2xl border border-brd bg-elev2">
+            <div class="p-4 rounded-2xl border border-brd bg-elev2 lift-card">
               <div class="w-10 h-10 rounded-xl bg-teal-soft flex items-center justify-center mb-3">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-teal"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2a10 10 0 1 0 10 10c0-1.1-.9-2-2-2h-2.5a2 2 0 0 1-2-2 2 2 0 0 1 .5-1.3A2 2 0 0 0 15 5a3 3 0 0 0-3-3z"/></svg>
               </div>
@@ -378,11 +455,72 @@
             <h3 class="font-display font-semibold text-sm text-ink mb-2">How These Tools Help Creators</h3>
             <p class="text-xs text-dim leading-relaxed">Writing a video description that's too long or a title that runs past a platform's character limit is one of the most common small mistakes creators make. The word and character counter above gives you an instant, accurate count so you can fit within YouTube, Instagram, or X's limits before you publish. The case converter saves time when reformatting a title from a script into a proper heading style, while the QR code generator is handy for adding a scannable link to a livestream overlay, business card, or printed flyer. The color palette picker lets you pull exact hex codes from a reference photo or thumbnail so your channel art, overlays, and graphics stay visually consistent.</p>
           </div>
+
+          <div class="grid sm:grid-cols-2 gap-4 mt-6 pt-6 border-t border-brd">
+            <!-- Password Generator -->
+            <div class="p-4 rounded-2xl border border-brd bg-elev2 lift-card">
+              <div class="w-10 h-10 rounded-xl bg-primary-soft flex items-center justify-center mb-3">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </div>
+              <h4 class="font-display font-semibold text-sm text-ink">Password Generator</h4>
+              <p class="text-xs text-dim mt-1 mb-3">Create a strong, random password for your creator accounts, dashboards, and logins — generated locally, never sent anywhere.</p>
+              <div class="flex items-center gap-2 mb-3">
+                <input id="pw-output" type="text" readonly class="flex-1 text-sm font-mono border border-brd rounded-xl p-2.5 bg-elev">
+                <button onclick="copyText('pw-output')" class="px-3 py-2 rounded-xl bg-elev3 text-xs font-semibold text-ink hover:bg-brd transition shrink-0">Copy</button>
+              </div>
+              <label class="flex items-center justify-between text-xs text-dim mb-2">
+                <span>Length: <span id="pw-length-val">16</span></span>
+                <input id="pw-length" type="range" min="8" max="32" value="16" oninput="document.getElementById('pw-length-val').textContent=this.value" class="w-32">
+              </label>
+              <div class="flex flex-wrap gap-3 text-xs text-dim mb-3">
+                <label class="flex items-center gap-1.5"><input id="pw-symbols" type="checkbox" checked> Symbols</label>
+                <label class="flex items-center gap-1.5"><input id="pw-numbers" type="checkbox" checked> Numbers</label>
+              </div>
+              <button onclick="generatePassword()" class="px-3.5 py-1.5 rounded-full bg-primary text-xs font-semibold text-white hover:opacity-90 transition">Generate Password</button>
+            </div>
+
+            <!-- Aspect Ratio Calculator -->
+            <div class="p-4 rounded-2xl border border-brd bg-elev2 lift-card">
+              <div class="w-10 h-10 rounded-xl bg-amber-soft flex items-center justify-center mb-3">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber"><rect x="2" y="6" width="20" height="12" rx="1.5"/><path d="M8 10v4M16 10v4"/></svg>
+              </div>
+              <h4 class="font-display font-semibold text-sm text-ink">Aspect Ratio Calculator</h4>
+              <p class="text-xs text-dim mt-1 mb-3">Enter a known width and height to instantly get the matching dimensions for thumbnails, banners, or exports at any ratio.</p>
+              <div class="grid grid-cols-2 gap-2 mb-2">
+                <input id="ar-w" type="number" placeholder="Width" class="text-sm border border-brd rounded-xl p-2.5 bg-elev focus:outline-none focus:ring-2 focus:ring-amber/30">
+                <input id="ar-h" type="number" placeholder="Height" class="text-sm border border-brd rounded-xl p-2.5 bg-elev focus:outline-none focus:ring-2 focus:ring-amber/30">
+              </div>
+              <input id="ar-neww" type="number" placeholder="New width (to find matching height)" class="w-full text-sm border border-brd rounded-xl p-2.5 bg-elev focus:outline-none focus:ring-2 focus:ring-amber/30 mb-3">
+              <button onclick="calcAspectRatio()" class="px-3.5 py-1.5 rounded-full bg-amber text-xs font-semibold text-white hover:opacity-90 transition">Calculate</button>
+              <p id="ar-output" class="text-sm font-mono text-ink mt-3"></p>
+            </div>
+          </div>
+
+          <!-- Lorem Ipsum Generator -->
+          <div class="p-4 rounded-2xl border border-brd bg-elev2 mt-4 lift-card">
+            <div class="w-10 h-10 rounded-xl bg-teal-soft flex items-center justify-center mb-3">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-teal"><path d="M4 6h16M4 10h16M4 14h10M4 18h7"/></svg>
+            </div>
+            <h4 class="font-display font-semibold text-sm text-ink">Lorem Ipsum Generator</h4>
+            <p class="text-xs text-dim mt-1 mb-3">Generate placeholder paragraphs for mockups, thumbnail templates, or design layouts before your real copy is ready.</p>
+            <div class="flex items-center gap-3 mb-3">
+              <label class="text-xs text-dim">Paragraphs:</label>
+              <input id="li-count" type="number" min="1" max="10" value="3" class="w-16 text-sm border border-brd rounded-xl p-2 bg-elev">
+              <button onclick="generateLorem()" class="px-3.5 py-1.5 rounded-full bg-teal text-xs font-semibold text-white hover:opacity-90 transition">Generate</button>
+              <button onclick="copyText('li-output')" class="px-3.5 py-1.5 rounded-full bg-elev3 text-xs font-semibold text-ink hover:bg-brd transition">Copy</button>
+            </div>
+            <textarea id="li-output" rows="5" readonly class="w-full text-sm border border-brd rounded-xl p-3 bg-elev"></textarea>
+          </div>
+
+          <div class="mt-6 pt-6 border-t border-brd">
+            <h3 class="font-display font-semibold text-sm text-ink mb-2">Utility Tools for Everyday Creator Work</h3>
+            <p class="text-xs text-dim leading-relaxed">Beyond writing and branding, creators regularly need small utility tools that have nothing to do with media editing but still save real time. The password generator produces cryptographically random strings using your browser's built-in <span class="font-mono">crypto.getRandomValues</span> API, which is more secure than a manually typed password and never leaves your device. The aspect ratio calculator removes the guesswork when resizing a thumbnail or banner to fit a new platform's dimensions without distorting the image. The Lorem Ipsum generator is a small but handy addition for anyone mocking up a thumbnail template, landing page, or presentation before the final text is written.</p>
+          </div>
         </div>
       </section>
 
       <!-- FAQ SECTION (always visible, not part of tab panels) -->
-      <section class="rounded-2xl border border-brd bg-elev p-6 sm:p-8">
+      <section class="rounded-2xl border border-brd bg-elev p-6 sm:p-8 reveal">
         <h2 class="font-display font-bold text-lg text-ink mb-1">Frequently Asked Questions</h2>
         <p class="text-dim text-sm mb-5">Common questions about how All-in-One Creator works, privacy, and file handling.</p>
         <div class="space-y-5">
@@ -401,6 +539,10 @@
           <div>
             <h4 class="font-display font-semibold text-sm text-ink mb-1">What file formats are supported?</h4>
             <p class="text-xs text-dim leading-relaxed">Photo tools accept JPEG, PNG, and WebP. Video tools accept common browser-playable formats such as MP4 and WebM and export WebM. PDF tools accept standard PDF documents and export either a merged PDF or a ZIP of split pages.</p>
+          </div>
+          <div>
+            <h4 class="font-display font-semibold text-sm text-ink mb-1">Are the password generator and text tools safe to use?</h4>
+            <p class="text-xs text-dim leading-relaxed">Yes. The password generator uses your browser's built-in cryptographic random number API, and none of the text you type into the word counter, case converter, or Lorem Ipsum tool is transmitted anywhere — everything is calculated instantly in your local browser session.</p>
           </div>
           <div>
             <h4 class="font-display font-semibold text-sm text-ink mb-1">Do I need to install anything?</h4>
@@ -449,11 +591,27 @@
     if (!btn) return;
     var cat = btn.getAttribute('data-cat');
     document.querySelectorAll('.nav-item[data-cat]').forEach(function (b) { b.classList.remove('active'); });
-    btn.classList.add('active');
+    document.querySelectorAll('.nav-item[data-cat="' + cat + '"]').forEach(function (b) { b.classList.add('active'); });
     document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('active'); });
     var target = document.getElementById('panel-' + cat);
     if (target) target.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
+
+  // ---- Scroll-reveal for content blocks ----
+  if ('IntersectionObserver' in window) {
+    var revealObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(function (el) { revealObserver.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in-view'); });
+  }
 
   // ---- Word & Character Counter ----
   var wcInput = document.getElementById('wc-input');
@@ -546,6 +704,63 @@
       });
     };
     img.src = URL.createObjectURL(file);
+  }
+
+  // ---- Password Generator ----
+  function generatePassword() {
+    var length = parseInt(document.getElementById('pw-length').value, 10);
+    var useSymbols = document.getElementById('pw-symbols').checked;
+    var useNumbers = document.getElementById('pw-numbers').checked;
+    var lower = 'abcdefghijklmnopqrstuvwxyz';
+    var upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    var numbers = '0123456789';
+    var symbols = '!@#$%^&*()_-+=?';
+    var pool = lower + upper;
+    if (useNumbers) pool += numbers;
+    if (useSymbols) pool += symbols;
+    var arr = new Uint32Array(length);
+    (window.crypto || window.msCrypto).getRandomValues(arr);
+    var result = '';
+    for (var i = 0; i < length; i++) {
+      result += pool[arr[i] % pool.length];
+    }
+    document.getElementById('pw-output').value = result;
+  }
+
+  // ---- Aspect Ratio Calculator ----
+  function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+  function calcAspectRatio() {
+    var w = parseFloat(document.getElementById('ar-w').value);
+    var h = parseFloat(document.getElementById('ar-h').value);
+    var newW = parseFloat(document.getElementById('ar-neww').value);
+    var out = document.getElementById('ar-output');
+    if (!w || !h) { out.textContent = 'Enter a width and height first.'; return; }
+    var d = gcd(Math.round(w), Math.round(h));
+    var ratioStr = (Math.round(w) / d) + ':' + (Math.round(h) / d);
+    var line = 'Ratio: ' + ratioStr;
+    if (newW) {
+      var newH = Math.round((h / w) * newW);
+      line += '  •  At width ' + newW + 'px → height ' + newH + 'px';
+    }
+    out.textContent = line;
+  }
+
+  // ---- Lorem Ipsum Generator ----
+  function generateLorem() {
+    var words = ['lorem','ipsum','dolor','sit','amet','consectetur','adipiscing','elit','sed','do','eiusmod','tempor','incididunt','ut','labore','et','dolore','magna','aliqua','enim','ad','minim','veniam','quis','nostrud','exercitation','ullamco','laboris','nisi','aliquip','ex','ea','commodo','consequat','duis','aute','irure','in','reprehenderit','voluptate','velit','esse','cillum','fugiat','nulla','pariatur'];
+    var count = Math.max(1, Math.min(10, parseInt(document.getElementById('li-count').value, 10) || 3));
+    var paragraphs = [];
+    for (var p = 0; p < count; p++) {
+      var sentence = [];
+      var sentenceLength = 10 + Math.floor(Math.random() * 8);
+      for (var i = 0; i < sentenceLength; i++) {
+        sentence.push(words[Math.floor(Math.random() * words.length)]);
+      }
+      var text = sentence.join(' ');
+      text = text.charAt(0).toUpperCase() + text.slice(1) + '.';
+      paragraphs.push(text);
+    }
+    document.getElementById('li-output').value = paragraphs.join('\n\n');
   }
 </script>
 
