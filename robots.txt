@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://free-online-tools-sigma.vercel.app/sitemap.xml
+Sitemap: https://all-in-one-creator-studio.vercel.app/sitemap.xml
